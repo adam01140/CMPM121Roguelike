@@ -18,6 +18,7 @@ public class EnemySpawner : MonoBehaviour
     public Dictionary<string, Enemy> enemy_types;
     public Dictionary<string, Level> levels;
 
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -64,7 +65,7 @@ public class EnemySpawner : MonoBehaviour
         StartCoroutine(SpawnWave());
     }
 
-    public int RPN_to_int(string rpn)
+    public int RPN_to_int(string rpn, int enemy_base_hp = 0)
     {
 
         Stack<int> stack = new Stack<int>();
@@ -76,21 +77,34 @@ public class EnemySpawner : MonoBehaviour
             {
                 stack.Push(currentWave);
             }
+            else if (token == "base")
+            {
+                stack.Push(enemy_base_hp);
+            }
             else if (token == "+" || token == "-" || token == "*" || token == "/" || token == "%")
             {
-                
+
 
                 int b = stack.Pop();
                 int a = stack.Pop();
-                if (token == "+"){
+                if (token == "+")
+                {
                     stack.Push(a + b);
-                } else if (token == "-"){
+                }
+                else if (token == "-")
+                {
                     stack.Push(a - b);
-                } else if (token == "*"){
+                }
+                else if (token == "*")
+                {
                     stack.Push(a * b);
-                } else if (token == "/"){
+                }
+                else if (token == "/")
+                {
                     stack.Push(a / b);
-                } else if (token == "%"){
+                }
+                else if (token == "%")
+                {
                     stack.Push(a % b);
                 }
             }
@@ -132,14 +146,16 @@ public class EnemySpawner : MonoBehaviour
 
         yield return new WaitWhile(() => GameManager.Instance.enemy_count > 0);
         currentWave += 1;
-        if (currentWave > level.waves){
+        if (currentWave > level.waves)
+        {
             GameManager.Instance.state = GameManager.GameState.GAMEOVER;
         }
-        else {
+        else
+        {
             GameManager.Instance.state = GameManager.GameState.WAVEEND;
         }
-        
-        
+
+
     }
 
     IEnumerator ManageWave(Spawn spawn)
@@ -157,36 +173,50 @@ public class EnemySpawner : MonoBehaviour
         // }
 
         int total_to_spawn = RPN_to_int(spawn.count); // e.g., "5 wave +" should become int
+        Enemy enemy_to_spawn = enemy_types[spawn.enemy];
+        int enemy_base_hp = enemy_to_spawn.hp;
+        int modified_hp = RPN_to_int(spawn.hp, enemy_base_hp);
         int spawned = 0;
-        Debug.Log(total_to_spawn);
-
+        int[] spawn_spaces = parseSpawn(spawn.location);
         float delay = spawn.delay > 0 ? spawn.delay : 1f;
 
         while (spawned < total_to_spawn)
         {
-            yield return SpawnEnemy(spawn.enemy);
+            yield return SpawnEnemy(spawn.enemy, modified_hp, spawn_spaces);
             spawned++;
             yield return new WaitForSeconds(delay);
         }
     }
 
-    IEnumerator SpawnEnemy(string enemy_name)
+    IEnumerator SpawnEnemy(string enemy_name, int hp, int[] spawn_location)
     {
-
+        int temp_rand = Random.Range(spawn_location[0], spawn_location[0] + spawn_location[1]);
         Enemy enemy_stats = enemy_types[enemy_name];
-        SpawnPoint spawn_point = SpawnPoints[Random.Range(0, SpawnPoints.Length)];
+        Debug.Log("Attempting Spawn of " + enemy_name + " at location" + temp_rand);
+        SpawnPoint spawn_point = SpawnPoints[temp_rand];
         Vector2 offset = Random.insideUnitCircle * 1.8f;
 
         Vector3 initial_position = spawn_point.transform.position + new Vector3(offset.x, offset.y, 0);
         GameObject new_enemy = Instantiate(enemy, initial_position, Quaternion.identity);
         new_enemy.GetComponent<SpriteRenderer>().sprite = GameManager.Instance.enemySpriteManager.Get(enemy_stats.sprite);
         EnemyController en = new_enemy.GetComponent<EnemyController>();
-        en.hp = new Hittable(enemy_stats.hp, Hittable.Team.MONSTERS, new_enemy);
+        en.hp = new Hittable(hp, Hittable.Team.MONSTERS, new_enemy);
         en.speed = enemy_stats.speed;
         en.damage = enemy_stats.damage;
         GameManager.Instance.AddEnemy(new_enemy);
         yield return new WaitForSeconds(0.5f);
     }
 
+    int[] parseSpawn(string spawn_string) => spawn_string switch
+    {
+        "random green" => new int[] { 0, 3 },
+        "random bone" => new int[] { 3, 1 },
+        "random red" => new int[] { 4, 3 },
+        "random" => new int[] { 0, 7 },
+        _ => new int[] { 0, 7 },
 
+    };
 }
+
+
+
