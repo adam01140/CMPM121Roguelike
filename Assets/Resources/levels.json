@@ -1,11 +1,11 @@
 [
     {
         "name": "Easy",
-        "waves": 2,
+        "waves": 10,
         "spawns": [
             {
                 "enemy": "zombie",
-                "count": "2 wave +",
+                "count": "5 wave +",
                 "hp": "base 5 wave * +",
                 "delay": "5",
                 "sequence": [
