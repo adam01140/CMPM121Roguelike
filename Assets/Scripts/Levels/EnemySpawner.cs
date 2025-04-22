@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using System.Collections;
 using System.Linq;
+using TMPro;
+using UnityEngine.SceneManagement;
 
 public class EnemySpawner : MonoBehaviour
 {
@@ -21,6 +23,8 @@ public class EnemySpawner : MonoBehaviour
     public Dictionary<string, Level> levels;
 
     private string current_level;
+
+    public TextMeshProUGUI gameOver;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -75,7 +79,13 @@ public class EnemySpawner : MonoBehaviour
 
     public void NextWave()
     {
-        if (GameManager.Instance.state == GameManager.GameState.GAMEOVER) return;
+        if (GameManager.Instance.state == GameManager.GameState.GAMEOVER) {
+            //gameOver.text = "Restart";
+            Debug.Log("restarted");
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            GameManager.Instance.state = GameManager.GameState.PREGAME;
+            return;
+        } 
 
         StartCoroutine(SpawnWave());
     }

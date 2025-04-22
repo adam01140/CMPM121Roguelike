@@ -21,27 +21,27 @@ public class RewardScreenManager : MonoBehaviour
         if (GameManager.Instance.state == GameManager.GameState.WAVEEND || GameManager.Instance.state == GameManager.GameState.GAMEOVER)
         {
             rewardUI.SetActive(true);
-            EnemyKillsText.SetActive(true);
-            DamageDealtText.SetActive(true);
-            DamageReceivedText.SetActive(true);
-            TimeSpentText.SetActive(true);
-            GameStateText.SetActive(true);
+            // EnemyKillsText.SetActive(true);
+            // DamageDealtText.SetActive(true);
+            // DamageReceivedText.SetActive(true);
+            // TimeSpentText.SetActive(true);
+            // GameStateText.SetActive(true);
         }
         else
         {
             rewardUI.SetActive(false);
-            EnemyKillsText.SetActive(false);
-            DamageDealtText.SetActive(false);
-            DamageReceivedText.SetActive(false);
-            TimeSpentText.SetActive(false);
-            GameStateText.SetActive(false);
+            // EnemyKillsText.SetActive(false);
+            // DamageDealtText.SetActive(false);
+            // DamageReceivedText.SetActive(false);
+            // TimeSpentText.SetActive(false);
+            // GameStateText.SetActive(false);
         }
         if (GameManager.Instance.state == GameManager.GameState.GAMEOVER)
         {
-            GameStateText.GetComponent<TMPro.TMP_Text>().text = "Game Over";
-            DamageDealtText.GetComponent<TMPro.TMP_Text>().text = "Damage Dealt: " + GameManager.damageDealt;
-            DamageReceivedText.GetComponent<TMPro.TMP_Text>().text = "Damage Received: " + GameManager.damageReceived;
-            TimeSpentText.GetComponent<TMPro.TMP_Text>().text = "Time Spent: " + GameManager.timeSpent;
+            // GameStateText.GetComponent<TMPro.TMP_Text>().text = "Game Over";
+            // DamageDealtText.GetComponent<TMPro.TMP_Text>().text = "Damage Dealt: " + GameManager.damageDealt;
+            // DamageReceivedText.GetComponent<TMPro.TMP_Text>().text = "Damage Received: " + GameManager.damageReceived;
+            // TimeSpentText.GetComponent<TMPro.TMP_Text>().text = "Time Spent: " + GameManager.timeSpent;
         }
     }
 
