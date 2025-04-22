@@ -30,6 +30,12 @@
                 "count": "wave 5 / 1 wave 5 % - *",
                 "hp": "100 25 wave *",
                 "location": "random bone"
+            },
+            {
+                "enemy": "wizard",
+                "count": "wave",
+                "hp": "100 30 wave *",
+                "location": "random"
             }
         ]
     },
@@ -65,6 +71,13 @@
                 "hp": "75 50 wave *",
                 "damage": "base 10 +",
                 "location": "random bone"
+            },
+            {
+                "enemy": "wizard",
+                "count": "2 wave +",
+                "hp": "100 30 wave *",
+                "damage": "base 12 +",
+                "location": "random"
             }
         ]
     },
@@ -99,6 +112,13 @@
                 "hp": "75 15 wave *",
                 "damage": "base 5 -",
                 "location": "random bone"
+            },
+            {
+                "enemy": "wizard",
+                "count": "2 wave +",
+                "hp": "100 30 wave *",
+                "damage": "base 12 +",
+                "location": "random"
             }
         ]
     }

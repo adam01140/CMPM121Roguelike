@@ -19,5 +19,12 @@
         "hp": 30,
         "speed": 7,
         "damage": 10
+    },
+    {
+        "name": "wizard",
+        "sprite": 4,
+        "hp": 25,
+        "speed": 6,
+        "damage": 15
     }
 ]
