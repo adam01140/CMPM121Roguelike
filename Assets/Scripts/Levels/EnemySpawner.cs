@@ -172,6 +172,13 @@ public class EnemySpawner : MonoBehaviour
         //     yield return new WaitForSeconds(spawn.delay);
         // }
 
+        int[] sequence = spawn.sequence;
+        if (sequence == null)
+        {
+            sequence = new int[] { 1 };
+        }
+        int sequence_iterator = 0;
+
         int total_to_spawn = RPN_to_int(spawn.count); // e.g., "5 wave +" should become int
         Enemy enemy_to_spawn = enemy_types[spawn.enemy];
         int enemy_base_hp = enemy_to_spawn.hp;
@@ -182,18 +189,24 @@ public class EnemySpawner : MonoBehaviour
 
         while (spawned < total_to_spawn)
         {
-            yield return SpawnEnemy(spawn.enemy, modified_hp, spawn_spaces);
-            spawned++;
+            for (int i = 0; i < sequence[sequence_iterator]; i++)
+            {
+                if (spawned == total_to_spawn)
+                {
+                    break;
+                }
+                yield return SpawnEnemy(spawn.enemy, modified_hp, spawn_spaces);
+                spawned++;
+            }
+            sequence_iterator = (sequence_iterator + 1) % sequence.Length;
             yield return new WaitForSeconds(delay);
         }
     }
 
     IEnumerator SpawnEnemy(string enemy_name, int hp, int[] spawn_location)
     {
-        int temp_rand = Random.Range(spawn_location[0], spawn_location[0] + spawn_location[1]);
         Enemy enemy_stats = enemy_types[enemy_name];
-        Debug.Log("Attempting Spawn of " + enemy_name + " at location" + temp_rand);
-        SpawnPoint spawn_point = SpawnPoints[temp_rand];
+        SpawnPoint spawn_point = SpawnPoints[Random.Range(spawn_location[0], spawn_location[0] + spawn_location[1])];
         Vector2 offset = Random.insideUnitCircle * 1.8f;
 
         Vector3 initial_position = spawn_point.transform.position + new Vector3(offset.x, offset.y, 0);
