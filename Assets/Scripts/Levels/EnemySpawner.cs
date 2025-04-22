@@ -15,17 +15,29 @@ public class EnemySpawner : MonoBehaviour
     public SpawnPoint[] SpawnPoints;
     private int currentWave = 1;
 
+
+
     public Dictionary<string, Enemy> enemy_types;
     public Dictionary<string, Level> levels;
+
+    private string current_level;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        GameObject selector = Instantiate(button, level_selector.transform);
-        selector.transform.localPosition = new Vector3(0, 130);
-        selector.GetComponent<MenuSelectorController>().spawner = this;
-        selector.GetComponent<MenuSelectorController>().SetLevel("Start");
+        GameObject selector_easy = Instantiate(button, level_selector.transform);
+        selector_easy.transform.localPosition = new Vector3(-100, 30);
+        selector_easy.GetComponent<MenuSelectorController>().spawner = this;
+        selector_easy.GetComponent<MenuSelectorController>().SetLevel("Easy");
+        GameObject selector_medium = Instantiate(button, level_selector.transform);
+        selector_medium.transform.localPosition = new Vector3(100, 30);
+        selector_medium.GetComponent<MenuSelectorController>().spawner = this;
+        selector_medium.GetComponent<MenuSelectorController>().SetLevel("Medium");
+        GameObject selector_endless = Instantiate(button, level_selector.transform);
+        selector_endless.transform.localPosition = new Vector3(0, -30);
+        selector_endless.GetComponent<MenuSelectorController>().spawner = this;
+        selector_endless.GetComponent<MenuSelectorController>().SetLevel("Endless");
 
         //Json Deserialization
         enemy_types = new Dictionary<string, Enemy>();
@@ -56,12 +68,15 @@ public class EnemySpawner : MonoBehaviour
     {
         level_selector.gameObject.SetActive(false);
         // this is not nice: we should not have to be required to tell the player directly that the level is starting
+        current_level = levelname;
         GameManager.Instance.player.GetComponent<PlayerController>().StartLevel();
         StartCoroutine(SpawnWave());
     }
 
     public void NextWave()
     {
+        if (GameManager.Instance.state == GameManager.GameState.GAMEOVER) return;
+
         StartCoroutine(SpawnWave());
     }
 
@@ -137,8 +152,8 @@ public class EnemySpawner : MonoBehaviour
         }
         GameManager.Instance.state = GameManager.GameState.INWAVE;
 
-        string level_name = "Easy";
-        Level level = levels[level_name];
+        Level level = levels[current_level];
+        Debug.Log("Spawing wave " + currentWave + " from level " + current_level);
         foreach (var wave in level.spawns)
         {
             StartCoroutine(ManageWave(wave));
