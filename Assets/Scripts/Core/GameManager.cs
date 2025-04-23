@@ -14,9 +14,9 @@ public class GameManager
         GAMEOVER
     }
     public GameState state;
-    public static int damageDealt;
-    public static int damageReceived;
-    public static int timeSpent;
+    public int damageDealt;
+    public int damageReceived;
+    public int timeSpent;
     public int countdown;
     private static GameManager theInstance;
     public static GameManager Instance
@@ -63,5 +63,12 @@ public class GameManager
         damageReceived = 0;
         timeSpent = 0;
         enemies = new List<GameObject>();
+    }
+    public void resetGame()
+    {
+        damageDealt = 0;
+        damageReceived = 0;
+        timeSpent = 0;
+        enemies.Clear();
     }
 }

@@ -60,6 +60,7 @@ public class EnemySpawner : MonoBehaviour
             Level lvl = level.ToObject<Level>();
             levels[lvl.name] = lvl;
         }
+        StartCoroutine(levelTimer());
     }
 
     // Update is called once per frame
@@ -79,15 +80,19 @@ public class EnemySpawner : MonoBehaviour
 
     public void NextWave()
     {
-        if (GameManager.Instance.state == GameManager.GameState.GAMEOVER) {
-            //gameOver.text = "Restart";
+        if (GameManager.Instance.state == GameManager.GameState.GAMEOVER)
+        {
+            GameManager.Instance.resetGame();
             Debug.Log("restarted");
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
             GameManager.Instance.state = GameManager.GameState.PREGAME;
-            return;
-        } 
 
-        StartCoroutine(SpawnWave());
+            return;
+        }
+        else
+        {
+            StartCoroutine(SpawnWave());
+        }
     }
 
     public int RPN_to_int(string rpn, int enemy_base_hp = 0)
@@ -175,7 +180,7 @@ public class EnemySpawner : MonoBehaviour
         {
             GameManager.Instance.state = GameManager.GameState.GAMEOVER;
         }
-        else
+        else if (GameManager.Instance.state != GameManager.GameState.GAMEOVER && GameManager.Instance.state != GameManager.GameState.PREGAME)
         {
             GameManager.Instance.state = GameManager.GameState.WAVEEND;
         }
@@ -254,6 +259,21 @@ public class EnemySpawner : MonoBehaviour
         _ => new int[] { 0, 7 },
 
     };
+    IEnumerator levelTimer()
+    {
+        while (GameManager.Instance.state != GameManager.GameState.GAMEOVER)
+        {
+            if (GameManager.Instance.state != GameManager.GameState.WAVEEND)
+            {
+                GameManager.Instance.timeSpent += 1;
+                yield return new WaitForSeconds(1);
+            }
+            else
+            {
+                yield return new WaitWhile(() => GameManager.Instance.state == GameManager.GameState.WAVEEND);
+            }
+        }
+    }
 }
 
 
