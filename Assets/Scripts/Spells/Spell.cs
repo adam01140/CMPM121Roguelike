@@ -61,3 +61,36 @@ public class Spell
     }
 
 }
+
+// class ArcaneBolt : Spell
+// {
+//     Spell inner;
+//     override protected virtual void Cast(ValueModifier modifier)
+//     {
+//         inner.Cast(new ValueAdder(10));
+//     }
+//     ArcaneBolt(Spell inner) { this.inner = inner; }
+// }
+
+
+// class ValueModifier  
+// {  
+//     public virtual int Apply(int value)  
+//     {  
+//         return value;  
+//     }  
+// }
+
+// class ValueAdder : ValueModifier  
+// {  
+//     private int amount;  
+
+//     public ValueAdder(int amount)  
+//     {  
+//         this.amount = amount;  
+//     }  
+//     public override int Apply(int value)  
+//     {  
+//         return value + amount;  
+//     }  
+// }
