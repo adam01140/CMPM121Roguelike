@@ -495,6 +495,26 @@ MonoBehaviour:
   manacost: {fileID: 11042825}
   damage: {fileID: 757752468}
   highlight: {fileID: 279594428}
+  spell:
+    name: 
+    description: 
+    icon: 0
+    N: 
+    spray: 0
+    mana_cost: 
+    cooldown: 0
+    projectile:
+      trajectory: 
+      speed: 
+      lifetime: 
+      sprite: 0
+    secondary_projectile:
+      trajectory: 
+      speed: 
+      lifetime: 
+      sprite: 0
+    last_cast: 0
+    team: 0
   dropbutton: {fileID: 426128245}
 --- !u!114 &96316930
 MonoBehaviour:
@@ -564,7 +584,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rewardUI: {fileID: 1709288111}
-  buttonText: {fileID: 0}
+  buttonText: {fileID: 254615550}
 --- !u!4 &220180078
 Transform:
   m_ObjectHideFlags: 0
@@ -679,7 +699,7 @@ GameObject:
   - component: {fileID: 254615551}
   - component: {fileID: 254615550}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: RewardScreenText (TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1707,6 +1727,26 @@ MonoBehaviour:
   manacost: {fileID: 532755681}
   damage: {fileID: 1860547075}
   highlight: {fileID: 1477215737}
+  spell:
+    name: 
+    description: 
+    icon: 0
+    N: 
+    spray: 0
+    mana_cost: 
+    cooldown: 0
+    projectile:
+      trajectory: 
+      speed: 
+      lifetime: 
+      sprite: 0
+    secondary_projectile:
+      trajectory: 
+      speed: 
+      lifetime: 
+      sprite: 0
+    last_cast: 0
+    team: 0
   dropbutton: {fileID: 1528944909}
 --- !u!114 &457295005
 MonoBehaviour:
@@ -3015,6 +3055,26 @@ MonoBehaviour:
   manacost: {fileID: 2070572078}
   damage: {fileID: 989605413}
   highlight: {fileID: 12506828}
+  spell:
+    name: 
+    description: 
+    icon: 0
+    N: 
+    spray: 0
+    mana_cost: 
+    cooldown: 0
+    projectile:
+      trajectory: 
+      speed: 
+      lifetime: 
+      sprite: 0
+    secondary_projectile:
+      trajectory: 
+      speed: 
+      lifetime: 
+      sprite: 0
+    last_cast: 0
+    team: 0
   dropbutton: {fileID: 578112679}
 --- !u!114 &797691356
 MonoBehaviour:
@@ -56253,6 +56313,26 @@ MonoBehaviour:
   manacost: {fileID: 400786126}
   damage: {fileID: 982783696}
   highlight: {fileID: 1270515289}
+  spell:
+    name: 
+    description: 
+    icon: 0
+    N: 
+    spray: 0
+    mana_cost: 
+    cooldown: 0
+    projectile:
+      trajectory: 
+      speed: 
+      lifetime: 
+      sprite: 0
+    secondary_projectile:
+      trajectory: 
+      speed: 
+      lifetime: 
+      sprite: 0
+    last_cast: 0
+    team: 0
   dropbutton: {fileID: 672798488}
 --- !u!114 &2085212186
 MonoBehaviour:

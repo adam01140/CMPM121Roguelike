@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Damage 
+public class Damage
 {
     public int amount;
     public enum Type
@@ -8,9 +8,9 @@ public class Damage
         PHYSICAL, ARCANE, NATURE, FIRE, ICE, DARK, LIGHT
     }
     public Type type;
-    public Damage(int amount, Type type)
+    public Damage(string amount, Type type)
     {
-        this.amount = amount;
+        this.amount = 100;
         this.type = type;
     }
 
