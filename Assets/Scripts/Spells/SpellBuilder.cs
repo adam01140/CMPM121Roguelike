@@ -11,9 +11,11 @@ public class SpellBuilder
     public Spells spell_bases;
 
 
-    public Spell Build(SpellCaster owner)
+    public Spell Build()
     {
-        return new Spell();
+
+        return this.spell_bases.arcane_blast;
+
     }
 
 
@@ -21,8 +23,7 @@ public class SpellBuilder
     {
         var spellText = Resources.Load<TextAsset>("spells");
         JToken jo = JToken.Parse(spellText.text);
-        Spells spell_bases = jo.ToObject<Spells>();
-        Debug.Log(spell_bases);
+        spell_bases = jo.ToObject<Spells>();
 
 
         // levels = new Dictionary<string, Level>();

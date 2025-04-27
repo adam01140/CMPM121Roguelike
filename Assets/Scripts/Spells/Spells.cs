@@ -7,10 +7,10 @@ using System;
 [Serializable]
 public class Spells
 {
-    public Spell arcane_bolt;
-    public Spell magic_missile;
-    public Spell arcane_blast;
-    public Spell arcane_spray;
+    public ArcaneBolt arcane_bolt;
+    public MagicMissile magic_missile;
+    public ArcaneBlast arcane_blast;
+    public ArcaneSpray arcane_spray;
     public Spell damage_amp;
     public Spell speed_amp;
     public Spell doubler;

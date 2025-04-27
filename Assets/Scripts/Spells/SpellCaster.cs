@@ -2,13 +2,16 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class SpellCaster 
+public class SpellCaster
 {
     public int mana;
     public int max_mana;
     public int mana_reg;
+    public int spell_power;
     public Hittable.Team team;
     public Spell spell;
+
+    public SpellBuilder builder;
 
     public IEnumerator ManaRegeneration()
     {
@@ -26,11 +29,14 @@ public class SpellCaster
         this.max_mana = mana;
         this.mana_reg = mana_reg;
         this.team = team;
-        spell = new SpellBuilder().Build(this);
+        this.spell_power = 10;
+        this.builder = new SpellBuilder();
+        this.spell = builder.Build();
+        this.spell.AssignOwner(this);
     }
 
     public IEnumerator Cast(Vector3 where, Vector3 target)
-    {        
+    {
         if (mana >= spell.GetManaCost() && spell.IsReady())
         {
             mana -= spell.GetManaCost();

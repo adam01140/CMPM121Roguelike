@@ -21,22 +21,20 @@ public class Spell
     public float last_cast;
     public SpellCaster owner;
     public Hittable.Team team;
+    public RPN rpn;
 
     public Spell()
     {
-        // this.name = other.name;
-        // this.description = other.description;
-        // this.icon = other.icon;
-        // this.N = other.N;
-        // this.spray = other.spray;
-        // this.damage = other.damage;
-        // this.mana_cost = other.mana_cost;
-        // this.cooldown = other.cooldown;
-        // this.projectile = other.projectile;
-        // this.secondary_projectile = other.secondary_projectile;
-        // this.owner = other.owner;
-        // this.team = other.team;
 
+
+    }
+
+    public void AssignOwner(SpellCaster owner)
+    {
+        this.owner = owner;
+        Dictionary<string, int> tempDict = new Dictionary<string, int>();
+        tempDict["power"] = this.owner.spell_power;
+        this.rpn = new RPN(tempDict);
     }
 
     public string GetName()
@@ -46,7 +44,15 @@ public class Spell
 
     public int GetManaCost()
     {
-        return 10; //needs string to RPN conversion
+        if (this.rpn != null)
+        {
+            return this.rpn.RPN_to_int(this.mana_cost);
+        }
+        else
+        {
+            Debug.Log("Spell was cast without a spell owner, use AssignOwner() method on spell creation");
+            return 10;
+        }
     }
 
     public int GetDamage()
@@ -76,7 +82,7 @@ public class Spell
         yield return new WaitForEndOfFrame();
     }
 
-    void OnHit(Hittable other, Vector3 impact)
+    public void OnHit(Hittable other, Vector3 impact)
     {
         if (other.team != team)
         {
@@ -86,29 +92,59 @@ public class Spell
     }
 
 }
-
-class ArcaneBolt : Spell
+public class ArcaneBolt : Spell
 {
-    Spell inner;
-    // override protected virtual void Cast(ValueModifier modifier)
-    // {
-    //     inner.Cast(new ValueAdder(10));
-    // }
-    ArcaneBolt(Spell inner)
+    override public IEnumerator Cast(Vector3 where, Vector3 target, Hittable.Team team)
     {
-        this.name = inner.name;
-        this.description = inner.description;
-        this.icon = inner.icon;
-        this.N = inner.N;
-        this.spray = inner.spray;
-        this.damage = inner.damage;
-        this.mana_cost = inner.mana_cost;
-        this.cooldown = inner.cooldown;
-        this.projectile = inner.projectile;
-        this.secondary_projectile = inner.secondary_projectile;
-        this.owner = inner.owner;
-        this.team = inner.team;
+        Projectile projectile = this.projectile;
+        this.team = team;
+        GameManager.Instance.projectileManager.CreateProjectile(0, projectile.trajectory, where, target - where, 15f, this.OnHit);
+        yield return new WaitForEndOfFrame();
+    }
+    ArcaneBolt() : base()
+    {
+    }
+}
 
+public class MagicMissile : Spell
+{
+    override public IEnumerator Cast(Vector3 where, Vector3 target, Hittable.Team team)
+    {
+        Projectile projectile = this.projectile;
+        this.team = team;
+        GameManager.Instance.projectileManager.CreateProjectile(0, projectile.trajectory, where, target - where, 15f, this.OnHit);
+        yield return new WaitForEndOfFrame();
+    }
+    MagicMissile() : base()
+    {
+    }
+}
+
+public class ArcaneBlast : Spell
+{
+    override public IEnumerator Cast(Vector3 where, Vector3 target, Hittable.Team team)
+    {
+        Projectile projectile = this.projectile;
+        this.team = team;
+        GameManager.Instance.projectileManager.CreateProjectile(0, projectile.trajectory, where, target - where, 15f, this.OnHit);
+        yield return new WaitForEndOfFrame();
+    }
+    ArcaneBlast() : base()
+    {
+    }
+}
+
+public class ArcaneSpray : Spell
+{
+    override public IEnumerator Cast(Vector3 where, Vector3 target, Hittable.Team team)
+    {
+        Projectile projectile = this.projectile;
+        this.team = team;
+        GameManager.Instance.projectileManager.CreateProjectile(0, projectile.trajectory, where, target - where, 15f, this.OnHit);
+        yield return new WaitForEndOfFrame();
+    }
+    ArcaneSpray() : base()
+    {
     }
 }
 
