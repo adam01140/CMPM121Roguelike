@@ -8,9 +8,9 @@ public class Damage
         PHYSICAL, ARCANE, NATURE, FIRE, ICE, DARK, LIGHT
     }
     public Type type;
-    public Damage(string amount, Type type)
+    public Damage(int amount, Type type)
     {
-        this.amount = 100;
+        this.amount = amount;
         this.type = type;
     }
 

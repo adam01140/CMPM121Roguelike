@@ -14,7 +14,7 @@ public class SpellBuilder
     public Spell Build()
     {
 
-        return this.spell_bases.arcane_blast;
+        return this.spell_bases.arcane_bolt;
 
     }
 

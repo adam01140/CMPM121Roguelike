@@ -12,7 +12,8 @@ public class Spell
     public int icon;
     public string N;
     public float spray;
-    public Damage damage;
+    public DamageTemp damage; //Temp used for conversion to proper damage class
+    public Damage damageFull;
     public string mana_cost;
     public float cooldown;
     public Projectile projectile;
@@ -50,14 +51,23 @@ public class Spell
         }
         else
         {
-            Debug.Log("Spell was cast without a spell owner, use AssignOwner() method on spell creation");
+            Debug.Log("Mana Cost was invoked without a spell owner, use the AssignOwner() method on spell creation");
             return 10;
         }
     }
 
     public int GetDamage()
     {
-        return 100; //^^
+        if (damageFull != null)
+        {
+            return damageFull.amount;
+        }
+        else
+        {
+            damageFull = new Damage(this.rpn.RPN_to_int(damage.amount), damage.type);
+            return damageFull.amount;
+        }
+        //^^
     }
 
     public float GetCooldown()
@@ -79,6 +89,7 @@ public class Spell
     {
         this.team = team;
         GameManager.Instance.projectileManager.CreateProjectile(0, "straight", where, target - where, 15f, OnHit);
+        this.last_cast = Time.time;
         yield return new WaitForEndOfFrame();
     }
 
@@ -86,7 +97,16 @@ public class Spell
     {
         if (other.team != team)
         {
-            other.Damage(new Damage("temp"/*GetDamage()*/, Damage.Type.ARCANE));
+            if (this.damageFull != null)
+            {
+                other.Damage(damageFull);
+            }
+            else
+            {
+                damageFull = new Damage(this.rpn.RPN_to_int(damage.amount), damage.type);
+                other.Damage(damageFull);
+            }
+
         }
 
     }
@@ -98,7 +118,8 @@ public class ArcaneBolt : Spell
     {
         Projectile projectile = this.projectile;
         this.team = team;
-        GameManager.Instance.projectileManager.CreateProjectile(0, projectile.trajectory, where, target - where, 15f, this.OnHit);
+        GameManager.Instance.projectileManager.CreateProjectile(0, projectile.trajectory, where, target - where, this.rpn.RPN_to_float(projectile.speed), this.OnHit);
+        this.last_cast = Time.time;
         yield return new WaitForEndOfFrame();
     }
     ArcaneBolt() : base()
@@ -112,7 +133,8 @@ public class MagicMissile : Spell
     {
         Projectile projectile = this.projectile;
         this.team = team;
-        GameManager.Instance.projectileManager.CreateProjectile(0, projectile.trajectory, where, target - where, 15f, this.OnHit);
+        GameManager.Instance.projectileManager.CreateProjectile(0, projectile.trajectory, where, target - where, this.rpn.RPN_to_float(projectile.speed), this.OnHit);
+        this.last_cast = Time.time;
         yield return new WaitForEndOfFrame();
     }
     MagicMissile() : base()
@@ -126,7 +148,8 @@ public class ArcaneBlast : Spell
     {
         Projectile projectile = this.projectile;
         this.team = team;
-        GameManager.Instance.projectileManager.CreateProjectile(0, projectile.trajectory, where, target - where, 15f, this.OnHit);
+        GameManager.Instance.projectileManager.CreateProjectile(0, projectile.trajectory, where, target - where, this.rpn.RPN_to_float(projectile.speed), this.OnHit);
+        this.last_cast = Time.time;
         yield return new WaitForEndOfFrame();
     }
     ArcaneBlast() : base()
@@ -140,7 +163,8 @@ public class ArcaneSpray : Spell
     {
         Projectile projectile = this.projectile;
         this.team = team;
-        GameManager.Instance.projectileManager.CreateProjectile(0, projectile.trajectory, where, target - where, 15f, this.OnHit);
+        GameManager.Instance.projectileManager.CreateProjectile(0, projectile.trajectory, where, target - where, this.rpn.RPN_to_float(projectile.speed), this.OnHit);
+        this.last_cast = Time.time;
         yield return new WaitForEndOfFrame();
     }
     ArcaneSpray() : base()
