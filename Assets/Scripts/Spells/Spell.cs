@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using System;
+using Unity.Mathematics;
 
 [Serializable]
 public class Spell
@@ -64,8 +65,18 @@ public class Spell
         }
         else
         {
-            damageFull = new Damage(this.rpn.RPN_to_int(damage.amount), damage.type);
-            return damageFull.amount;
+            if (this.rpn != null)
+            {
+                damageFull = new Damage(this.rpn.RPN_to_int(damage.amount), damage.type);
+                return damageFull.amount;
+            }
+            else
+            {
+                Debug.Log("Get Damage was invoked without a spell owner, use the AssignOwner() method on spell creation");
+                return 100;
+            }
+
+
         }
         //^^
     }
@@ -93,7 +104,7 @@ public class Spell
         yield return new WaitForEndOfFrame();
     }
 
-    public void OnHit(Hittable other, Vector3 impact)
+    public virtual void OnHit(Hittable other, Vector3 impact)
     {
         if (other.team != team)
         {
@@ -152,6 +163,53 @@ public class ArcaneBlast : Spell
         this.last_cast = Time.time;
         yield return new WaitForEndOfFrame();
     }
+    override public void OnHit(Hittable other, Vector3 impact)
+    {
+        if (other.team != team)
+        {
+            if (this.damageFull != null)
+            {
+                other.Damage(damageFull);
+            }
+            else
+            {
+                damageFull = new Damage(this.rpn.RPN_to_int(damage.amount), damage.type);
+                other.Damage(damageFull);
+            }
+        }
+        Projectile projectile = this.secondary_projectile;
+        float currCircleOffset = 0.0f;
+        int numProj = this.rpn.RPN_to_int(this.N);
+        float projOffsetDiff = 2.0f / (float)numProj;
+        for (int x = 0; x < numProj; x++)
+        {
+            float radToDegConversion = currCircleOffset * Mathf.PI;
+            Vector3 targetOffset = new Vector3(impact.x - (Mathf.Sin(radToDegConversion) * 10.0f), impact.y - (Mathf.Cos(radToDegConversion) * 10.0f), impact.z);
+            Debug.Log("Impact: " + impact + " TargetOffset: " + targetOffset);
+            GameManager.Instance.projectileManager.CreateProjectile(0, projectile.trajectory, impact, targetOffset, this.rpn.RPN_to_float(projectile.speed), this.SecondaryOnHit/*, this.rpn.RPN_to_float(projectile.lifetime)*/);
+
+            currCircleOffset += projOffsetDiff;
+        }
+
+
+    }
+
+    public void SecondaryOnHit(Hittable other, Vector3 impact)
+    {
+        if (other.team != team)
+        {
+            if (this.damageFull != null)
+            {
+                other.Damage(damageFull);
+            }
+            else
+            {
+                damageFull = new Damage(this.rpn.RPN_to_int(damage.amount), damage.type);
+                other.Damage(damageFull);
+            }
+        }
+    }
+
     ArcaneBlast() : base()
     {
     }
@@ -163,7 +221,14 @@ public class ArcaneSpray : Spell
     {
         Projectile projectile = this.projectile;
         this.team = team;
-        GameManager.Instance.projectileManager.CreateProjectile(0, projectile.trajectory, where, target - where, this.rpn.RPN_to_float(projectile.speed), this.OnHit);
+        int numProj = this.rpn.RPN_to_int(this.N);
+        for (int x = 0; x < numProj; x++)
+        {
+            Vector3 randomOffset = new Vector3(UnityEngine.Random.Range(this.spray * -1.0f, this.spray), 0, 0);
+            GameManager.Instance.projectileManager.CreateProjectile(0, projectile.trajectory, where, target - where + randomOffset, this.rpn.RPN_to_float(projectile.speed), this.OnHit, this.rpn.RPN_to_float(projectile.lifetime));
+        }
+
+
         this.last_cast = Time.time;
         yield return new WaitForEndOfFrame();
     }
