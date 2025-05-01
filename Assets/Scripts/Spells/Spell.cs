@@ -44,7 +44,7 @@ public class Spell
         return this.name;
     }
 
-    public int GetManaCost()
+    public virtual int GetManaCost()
     {
         if (this.rpn != null)
         {
@@ -57,7 +57,7 @@ public class Spell
         }
     }
 
-    public int GetDamage()
+    public virtual int GetDamage()
     {
         if (damageFull != null)
         {
@@ -81,7 +81,7 @@ public class Spell
         //^^
     }
 
-    public float GetCooldown()
+    public virtual float GetCooldown()
     {
         return this.cooldown;
     }
@@ -122,6 +122,79 @@ public class Spell
 
     }
 
+}
+
+public class ModifierSpell: Spell {
+     private Spell innerSpell;
+    private List<ValueModifier> damageModifiers = new List<ValueModifier>();
+    private List<ValueModifier> manaModifiers   = new List<ValueModifier>();
+    private List<ValueModifier> cooldownModifiers = new List<ValueModifier>();
+    private List<ValueModifier> speedModifiers = new List<ValueModifier>();
+
+    public ModifierSpell(Spell inner)
+    {
+        this.innerSpell = inner;
+        // Copy base properties
+        this.name = inner.name;
+        this.description = inner.description;
+        this.icon = inner.icon;
+        this.projectile = inner.projectile;
+        this.secondary_projectile = inner.secondary_projectile;
+    }
+
+    public void AddDamageModifier(ValueModifier mod)   => damageModifiers.Add(mod);
+    public void AddManaModifier(ValueModifier mod)     => manaModifiers.Add(mod);
+    public void AddCooldownModifier(ValueModifier mod) => cooldownModifiers.Add(mod);
+    public void AddSpeedModifier(ValueModifier mod)    => speedModifiers.Add(mod);
+
+    public override int GetDamage()
+    {
+        int baseVal = innerSpell.GetDamage();
+        return ValueModifier.ApplyModifiers(baseVal, damageModifiers);
+    }
+
+    public override int GetManaCost()
+    {
+        int baseVal = innerSpell.GetManaCost();
+        return ValueModifier.ApplyModifiers(baseVal, manaModifiers);
+    }
+
+    public override float GetCooldown()
+    {
+        float baseVal = innerSpell.GetCooldown();
+        int modified = ValueModifier.ApplyModifiers((int)baseVal, cooldownModifiers);
+        return modified;
+    }
+
+    // Speed is typically retrieved via RPN; here we adjust speed before casting.
+    public float GetSpeed()
+    {
+        float baseSpeed = innerSpell.rpn.RPN_to_float(innerSpell.projectile.speed);
+        int modified = ValueModifier.ApplyModifiers((int)baseSpeed, speedModifiers);
+        return modified;
+    }
+
+    public override IEnumerator Cast(Vector3 where, Vector3 target, Hittable.Team team)
+    {
+        // Ensure inner spell has the same owner and RPN context
+        innerSpell.AssignOwner(owner);
+        this.team = team;
+
+        // Override projectile speed if modifiers exist
+        float finalSpeed = GetSpeed();
+        var proj = innerSpell.projectile;
+        GameManager.Instance.projectileManager.CreateProjectile(
+            0,
+            proj.trajectory,
+            where,
+            target - where,
+            finalSpeed,
+            innerSpell.OnHit
+        );
+
+        this.last_cast = Time.time;
+        yield return new WaitForEndOfFrame();
+    }
 }
 public class ArcaneBolt : Spell
 {
@@ -238,24 +311,37 @@ public class ArcaneSpray : Spell
 }
 
 
-class ValueModifier
+public abstract class ValueModifier
 {
-    public virtual int Apply(int value)
+    public abstract int Apply(int value);
+
+    public static int ApplyModifiers(int baseValue, IEnumerable<ValueModifier> mods)
     {
-        return value;
+        int result = baseValue;
+        foreach (var m in mods)
+            result = m.Apply(result);
+        return result;
     }
 }
 
-class ValueAdder : ValueModifier
+
+public class ValueAdder : ValueModifier
 {
     private int amount;
-
-    public ValueAdder(int amount)
-    {
-        this.amount = amount;
+    public ValueAdder(int amount) { 
+        this.amount = amount; 
     }
-    public override int Apply(int value)
-    {
+    public override int Apply(int value){
         return value + amount;
+    }
+}
+
+
+public class ValueMultiplier : ValueModifier
+{
+    private float amount;
+    public ValueMultiplier(float amount) { this.amount = amount; }
+    public override int Apply(int value){
+        return Mathf.RoundToInt(value * amount);
     }
 }
