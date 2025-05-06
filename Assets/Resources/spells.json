@@ -40,6 +40,17 @@
        "cooldown": "0.5",
        "projectile": {"trajectory": "straight", "speed": "8", "sprite": 0, "lifetime": "0.1 power 100 / +"}
    },
+   "arcane_spread":  {
+       "name": "Arcane Spread",
+       "description": "A large AoE attack",
+       "icon": 1,
+       "N": "7 power 25 / +",
+       "radius": "2",
+       "damage": {"amount": "3 power 5 / +", "type": "arcane"},
+       "mana_cost": "15",
+       "cooldown": "0.5",
+       "projectile": {"trajectory": "straight", "speed": "8", "sprite": 0, "lifetime": "0.1 power 100 / +"}
+   },
    "damage_amp": {
        "name": "damage-amplified",
        "description": "Increased damage and increased mana cost.",
@@ -76,6 +87,11 @@
        "damage_multiplier": "0.75",
        "mana_adder": "10",
        "projectile_trajectory": "homing"
+   },
+   "continuous": {
+       "name": "continuous",
+       "description": "Will continue to hit enemies even after it hits one, doing slightly less damage",
+       "damage_multiplier": "0.9"
    }
 
 }

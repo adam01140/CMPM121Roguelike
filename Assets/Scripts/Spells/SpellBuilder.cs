@@ -25,6 +25,18 @@ public class SpellBuilder
         JToken jo = JToken.Parse(spellText.text);
         spell_bases = jo.ToObject<Spells>();
 
+        //random spell generator
+
+        // public List<Spell> allSpells; 
+
+        // public Spell GetRandomSpell()
+        // {
+            
+
+        //     int index = Random.Range(0, allSpells.Count);
+        //     return allSpells[index];
+        // }
+
 
         // levels = new Dictionary<string, Level>();
         // var leveltext = Resources.Load<TextAsset>("levels");

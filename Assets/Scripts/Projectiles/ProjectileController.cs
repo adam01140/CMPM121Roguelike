@@ -41,7 +41,11 @@ public class ProjectileController : MonoBehaviour
             }
 
         }
-        Destroy(gameObject);
+
+
+        
+            Destroy(gameObject);
+        
     }
 
     public void SetLifetime(float lifetime)

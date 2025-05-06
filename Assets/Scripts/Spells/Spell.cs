@@ -236,6 +236,7 @@ public class ArcaneBlast : Spell
         this.last_cast = Time.time;
         yield return new WaitForEndOfFrame();
     }
+    
     override public void OnHit(Hittable other, Vector3 impact)
     {
         if (other.team != team)
@@ -266,6 +267,8 @@ public class ArcaneBlast : Spell
 
 
     }
+
+
 
     public void SecondaryOnHit(Hittable other, Vector3 impact)
     {
@@ -307,6 +310,46 @@ public class ArcaneSpray : Spell
     }
     ArcaneSpray() : base()
     {
+    }
+}
+
+public class ArcaneSpread : Spell
+{
+    override public IEnumerator Cast(Vector3 where, Vector3 target, Hittable.Team team)
+    {
+        Projectile projectile = this.projectile;
+        this.team = team;
+        GameManager.Instance.projectileManager.CreateProjectile(0, projectile.trajectory, where, target - where, this.rpn.RPN_to_float(projectile.speed), this.OnHit);
+        this.last_cast = Time.time;
+        yield return new WaitForEndOfFrame();
+    }
+
+    override public void OnHit(Hittable other, Vector3 impact){
+    
+
+       
+
+        float radius = 2f;
+        Collider2D[] hits = Physics2D.OverlapCircleAll(impact, radius);
+
+        foreach (var hit in hits)
+        {
+            if (hit.gameObject.CompareTag("unit"))
+            {
+                Hittable hittable = hit.gameObject.GetComponent<Hittable>();
+
+
+                if (hittable != null && hittable.team != this.team)
+                {
+                    base.OnHit(hittable, impact);
+                }
+            }
+        }
+        
+    }
+
+    ArcaneSpread() : base() {
+
     }
 }
 

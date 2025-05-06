@@ -18,19 +18,23 @@ public class PlayerController : MonoBehaviour
 
     public Unit unit;
 
+    public EnemySpawner enemySpawner;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         unit = GetComponent<Unit>();
         GameManager.Instance.player = gameObject;
+        
     }
 
     public void StartLevel()
     {
-        spellcaster = new SpellCaster(125, 8, Hittable.Team.PLAYER);
+        int wave = enemySpawner.currentWave;
+        spellcaster = new SpellCaster(wave * 10 + 90, wave + 10, Hittable.Team.PLAYER);
         StartCoroutine(spellcaster.ManaRegeneration());
 
-        hp = new Hittable(100, Hittable.Team.PLAYER, gameObject);
+        hp = new Hittable(5 * wave + 95, Hittable.Team.PLAYER, gameObject);
         hp.OnDeath += Die;
         hp.team = Hittable.Team.PLAYER;
 

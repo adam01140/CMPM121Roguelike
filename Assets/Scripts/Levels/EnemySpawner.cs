@@ -15,7 +15,7 @@ public class EnemySpawner : MonoBehaviour
     public GameObject button;
     public GameObject enemy;
     public SpawnPoint[] SpawnPoints;
-    private int currentWave = 1;
+    public int currentWave { get; private set; } = 1;
 
 
 
