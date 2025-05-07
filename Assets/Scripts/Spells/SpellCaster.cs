@@ -29,7 +29,8 @@ public class SpellCaster
         this.max_mana = mana;
         this.mana_reg = mana_reg;
         this.team = team;
-        this.spell_power = 10;
+
+        this.spell_power = GameManager.Instance.wave * 10;
         this.builder = new SpellBuilder();
         this.spell = builder.Build();
         this.spell.AssignOwner(this);

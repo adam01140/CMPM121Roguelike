@@ -66,6 +66,7 @@ public class Spell
 
     public virtual int GetDamage()
     {
+
         if (damageFull != null)
         {
             return damageFull.amount;
@@ -237,6 +238,10 @@ public class ModifierSpell : Spell
 
     public override IEnumerator Cast(Vector3 where, Vector3 target, Hittable.Team team, int cast = 0, float projDelay = 0.0f, float splitSpread = 0.0f)
     {
+        this.AssignOwner(this.owner);
+        innerSpell.damageFull = new Damage(this.rpn.RPN_to_int(innerSpell.damage.amount), innerSpell.damage.type);
+        innerSpell.GetDamageObj().amount = this.GetDamage();
+
         yield return new WaitForSeconds(projDelay);
 
         if (cast < this.casts)
