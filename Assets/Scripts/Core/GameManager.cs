@@ -14,6 +14,7 @@ public class GameManager
         GAMEOVER
     }
     public GameState state;
+    public int wave;
     public int damageDealt;
     public int damageReceived;
     public int timeSpent;
@@ -59,6 +60,7 @@ public class GameManager
 
     private GameManager()
     {
+        wave = 0;
         damageDealt = 0;
         damageReceived = 0;
         timeSpent = 0;
@@ -66,6 +68,7 @@ public class GameManager
     }
     public void resetGame()
     {
+        wave = 0;
         damageDealt = 0;
         damageReceived = 0;
         timeSpent = 0;

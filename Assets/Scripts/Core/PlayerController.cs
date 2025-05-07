@@ -25,12 +25,12 @@ public class PlayerController : MonoBehaviour
     {
         unit = GetComponent<Unit>();
         GameManager.Instance.player = gameObject;
-        
+
     }
 
     public void StartLevel()
     {
-        int wave = enemySpawner.currentWave;
+        int wave = GameManager.Instance.wave;
         spellcaster = new SpellCaster(wave * 10 + 90, wave + 10, Hittable.Team.PLAYER);
         StartCoroutine(spellcaster.ManaRegeneration());
 

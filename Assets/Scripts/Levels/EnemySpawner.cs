@@ -168,13 +168,13 @@ public class EnemySpawner : MonoBehaviour
         GameManager.Instance.state = GameManager.GameState.INWAVE;
 
         Level level = levels[current_level];
-        Debug.Log("Spawing wave " + currentWave + " from level " + current_level);
         foreach (var wave in level.spawns)
         {
             StartCoroutine(ManageWave(wave));
         }
 
         yield return new WaitWhile(() => GameManager.Instance.enemy_count > 0);
+        GameManager.Instance.wave += 1;
         currentWave += 1;
         if (currentWave > level.waves)
         {

@@ -3,6 +3,7 @@ using UnityEngine;
 public class Damage
 {
     public int amount;
+    public int baseDam;
     public enum Type
     {
         PHYSICAL, ARCANE, NATURE, FIRE, ICE, DARK, LIGHT
@@ -11,6 +12,7 @@ public class Damage
     public Damage(int amount, Type type)
     {
         this.amount = amount;
+        this.baseDam = amount;
         this.type = type;
     }
 
