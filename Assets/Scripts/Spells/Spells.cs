@@ -11,14 +11,15 @@ public class Spells
     public MagicMissile magic_missile;
     public ArcaneBlast arcane_blast;
     public ArcaneSpray arcane_spray;
-    public ArcaneSpread arcane_spread;
+    public ArcaneBounce arcane_bounce;
     public DamageAmp damage_amp;
     public SpeedAmp speed_amp;
     public Doubler doubler;
     public Splitter splitter;
     public Chaos chaos;
     public Homing homing;
-    public Continuous continuous;
+    public Machine machine;
+    public Spray spray;
 
 
 

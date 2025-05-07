@@ -18,6 +18,7 @@ public abstract class Mod
     public float angle;
     public float delay;
     public string projectile_trajectory;
+    public string second_projectile_trajectory;
     public RPN localRPN;
 
 
@@ -129,9 +130,9 @@ public class Homing : Mod
 
     }
 }
-public class Continuous : Mod
+public class Machine : Mod
 {
-    public Continuous()
+    public Machine()
     {
         Dictionary<string, int> tempDict = new Dictionary<string, int>();
         tempDict["wave"] = GameManager.Instance.wave;
@@ -139,12 +140,43 @@ public class Continuous : Mod
     }
     public override void ApplySelf(ModifierSpell spell)
     {
-        // Dictionary<string, int> tempDict = new Dictionary<string, int>();
-        // tempDict["wave"] = GameManager.Instance.wave;
-        // RPN tempRPN = new RPN(tempDict);
+        ValueMultiplier damage_mult = new ValueMultiplier(this.localRPN.RPN_to_float(damage_multiplier));
+        spell.AddDamageModifier(damage_mult);
+        ValueMultiplier mana_mult = new ValueMultiplier(this.localRPN.RPN_to_float(mana_multiplier));
+        spell.AddManaModifier(mana_mult);
+        ValueMultiplier cooldown_mult = new ValueMultiplier(this.localRPN.RPN_to_float(cooldown_multiplier));
+        spell.AddCooldownModifier(cooldown_mult);
+        //int count = this.localRPN.RPN_to_int(this.N);
+        spell.AddCasts(10);
+        spell.AddMultiCastDelay(delay);
+    }
+}
+
+public class Spray : Mod
+{
+    public Spray()
+    {
+        Dictionary<string, int> tempDict = new Dictionary<string, int>();
+        tempDict["wave"] = GameManager.Instance.wave;
+        this.localRPN = new RPN(tempDict);
+    }
+    public override void ApplySelf(ModifierSpell spell)
+    {
         ValueMultiplier damage_mult = new ValueMultiplier(this.localRPN.RPN_to_float(damage_multiplier));
         spell.AddDamageModifier(damage_mult);
 
+        ValueAdder mana_add = new ValueAdder(this.localRPN.RPN_to_int(mana_adder));
+        spell.AddManaModifier(mana_add);
+
+        spell.ChangeProjectileTrajectory(projectile_trajectory);
+
+        CoroutineManager.Instance.Run(ChangeTrajectoryAfterDelay(spell, 1f));
+    }
+
+    private IEnumerator ChangeTrajectoryAfterDelay(ModifierSpell spell, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        spell.ChangeProjectileTrajectory(second_projectile_trajectory);
     }
 }
 

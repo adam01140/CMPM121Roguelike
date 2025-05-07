@@ -47,6 +47,13 @@ public class Spell
         this.projectile.trajectory = newTrajectory;
     }
 
+    // private IEnumerator ChangeTrajectoryAfterDelay(ModifierSpell spell, float delay, string newTrajectory)
+    // {
+    //     yield return new WaitForSeconds(delay);
+    //     spell.ChangeProjectileTrajectory(newTrajectory);
+    // }
+
+
     public string GetName()
     {
         return this.name;
@@ -403,7 +410,7 @@ public class ArcaneSpray : Spell
     }
 }
 
-public class ArcaneSpread : Spell
+public class ArcaneBounce : Spell
 {
     override public IEnumerator Cast(Vector3 where, Vector3 target, Hittable.Team team, int cast = 0, float delay = 0.0f, float splitSpread = 0.0f)
     {
@@ -416,30 +423,33 @@ public class ArcaneSpread : Spell
 
     override public void OnHit(Hittable other, Vector3 impact)
     {
-
-
-
-
-        float radius = 2f;
-        Collider2D[] hits = Physics2D.OverlapCircleAll(impact, radius);
-
-        foreach (var hit in hits)
+        if (other.team != team)
         {
-            if (hit.gameObject.CompareTag("unit"))
+            if (this.damageFull != null)
             {
-                Hittable hittable = hit.gameObject.GetComponent<Hittable>();
-
-
-                if (hittable != null && hittable.team != this.team)
-                {
-                    base.OnHit(hittable, impact);
-                }
+                other.Damage(damageFull);
+            }
+            else
+            {
+                damageFull = new Damage(this.rpn.RPN_to_int(damage.amount), damage.type);
+                other.Damage(damageFull);
             }
         }
+        Projectile projectile = this.secondary_projectile;
+        float currCircleOffset = 1.0f;
+        //int numProj = this.rpn.RPN_to_int(this.N);
+        //float projOffsetDiff = 2.0f / (float)numProj;
+        for (int x = 0; x < 1; x++)
+        {
+            float radAddPi = currCircleOffset * Mathf.PI;
+            Vector3 targetOffset = new Vector3(impact.x - (Mathf.Sin(radAddPi) * 100.0f), impact.y - (Mathf.Cos(radAddPi) * 100.0f), impact.z);
+            GameManager.Instance.projectileManager.CreateProjectile(0, projectile.trajectory, impact, targetOffset, this.rpn.RPN_to_float(projectile.speed), this.OnHit);
+        }
+
 
     }
-
-    ArcaneSpread() : base()
+ 
+    ArcaneBounce() : base()
     {
 
     }
