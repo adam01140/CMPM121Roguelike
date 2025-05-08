@@ -91,8 +91,15 @@ public class EnemySpawner : MonoBehaviour
         }
         else
         {
+            GameManager.Instance.player.GetComponent<PlayerController>().UpdateStats();
             StartCoroutine(SpawnWave());
         }
+    }
+
+     public void NewSpell()
+    {
+            GameManager.Instance.player.GetComponent<PlayerController>().StartLevel();
+            StartCoroutine(SpawnWave());
     }
 
     public int RPN_to_int(string rpn, int enemy_base_hp = 0)

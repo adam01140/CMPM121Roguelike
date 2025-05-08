@@ -17,18 +17,17 @@ public class PlayerStatTextManager : MonoBehaviour
     {
         if (GameManager.Instance.state == GameManager.GameState.WAVEEND )
         {
-            Debug.Log(GameManager.Instance.projectileManager.projectiles[0]);
+            Debug.Log(GameManager.Instance.player.GetComponent<PlayerController>().spellcaster.spell.GetName());
             temp.text = "Damage Dealt: " + GameManager.Instance.damageDealt +
                 "\nDamage Received: " + GameManager.Instance.damageReceived +
                 "\nTime Spent: " + GameManager.Instance.timeSpent +
-                "\nNew Spell: " + GameManager.Instance.projectileManager.projectiles[0];
+                "\nNew Spell: " + GameManager.Instance.projectileManager.projectiles[0].name;
         }
         else if (GameManager.Instance.state == GameManager.GameState.GAMEOVER){
             temp.text = "Damage Dealt: " + GameManager.Instance.damageDealt +
                 "\nDamage Received: " + GameManager.Instance.damageReceived +
                 "\nTime Spent: " + GameManager.Instance.timeSpent;
-        }
-        {
+        }else{
             temp.text = "";
         }
     }

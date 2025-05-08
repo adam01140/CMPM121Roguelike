@@ -40,13 +40,13 @@ public class SpellBuilder
         allSpellsBases.Add(this.spell_bases.arcane_spray);
         allSpellsBases.Add(this.spell_bases.arcane_bounce);
         allSpellsMods = new List<Mod>();
-        // allSpellsMods.Add(this.spell_bases.damage_amp);
-        // allSpellsMods.Add(this.spell_bases.speed_amp);
-        // allSpellsMods.Add(this.spell_bases.doubler);
-        // allSpellsMods.Add(this.spell_bases.splitter);
-        // allSpellsMods.Add(this.spell_bases.chaos);
-        // allSpellsMods.Add(this.spell_bases.homing);
-        // allSpellsMods.Add(this.spell_bases.spray);
+        allSpellsMods.Add(this.spell_bases.damage_amp);
+        allSpellsMods.Add(this.spell_bases.speed_amp);
+        allSpellsMods.Add(this.spell_bases.doubler);
+        allSpellsMods.Add(this.spell_bases.splitter);
+        allSpellsMods.Add(this.spell_bases.chaos);
+        allSpellsMods.Add(this.spell_bases.homing);
+        allSpellsMods.Add(this.spell_bases.spray);
         allSpellsMods.Add(this.spell_bases.machine);
 
 

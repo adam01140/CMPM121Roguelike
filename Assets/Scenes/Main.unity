@@ -585,6 +585,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rewardUI: {fileID: 1709288111}
   buttonText: {fileID: 254615550}
+  spellButton: {fileID: 645550939}
 --- !u!4 &220180078
 Transform:
   m_ObjectHideFlags: 0
@@ -2494,7 +2495,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 519420033}
         m_TargetAssemblyTypeName: EnemySpawner, Assembly-CSharp
-        m_MethodName: NextWave
+        m_MethodName: NewSpell
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
