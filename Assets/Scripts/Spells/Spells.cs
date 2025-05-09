@@ -19,7 +19,7 @@ public class Spells
     public Chaos chaos;
     public Homing homing;
     public Machine machine;
-    public Spray spray;
+    public Bleed bleed;
 
 
 

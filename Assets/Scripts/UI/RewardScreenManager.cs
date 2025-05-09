@@ -6,7 +6,9 @@ public class RewardScreenManager : MonoBehaviour
     //Should probalbly refactor into seperate manager script but this works for now since it's not that many objects
     public GameObject rewardUI;
     public TextMeshProUGUI buttonText;
-    public GameObject spellButton;
+    public GameObject changeSpellButton;
+    public GameObject changeModButton;
+    public GameObject addModButton;
     void Start()
     {
         rewardUI.SetActive(false);
@@ -21,10 +23,17 @@ public class RewardScreenManager : MonoBehaviour
             if (GameManager.Instance.state == GameManager.GameState.GAMEOVER)
             {
                 buttonText.text = "Try Again?";
-                spellButton.SetActive(false);
+                changeSpellButton.SetActive(false);
+                changeModButton.SetActive(false);
+                addModButton.SetActive(false);
+
             }
-            else if (GameManager.Instance.state == GameManager.GameState.WAVEEND){
-                spellButton.SetActive(true);
+            else if (GameManager.Instance.state == GameManager.GameState.WAVEEND)
+            {
+                changeSpellButton.SetActive(true);
+                changeModButton.SetActive(true);
+                addModButton.SetActive(true);
+
             }
 
         }

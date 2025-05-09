@@ -19,6 +19,7 @@ public abstract class Mod
     public float delay;
     public string projectile_trajectory;
     public string second_projectile_trajectory;
+    public string bleed_damage;
     public RPN localRPN;
 
 
@@ -36,8 +37,6 @@ public class DamageAmp : Mod
     public override void ApplySelf(ModifierSpell spell)
     {
         ValueMultiplier damage_mult = new ValueMultiplier(this.localRPN.RPN_to_float(damage_multiplier));
-        Debug.Log(damage_multiplier);
-        Debug.Log(damage_mult.amount);
         spell.AddDamageModifier(damage_mult);
         ValueMultiplier mana_mult = new ValueMultiplier(this.localRPN.RPN_to_float(mana_multiplier));
         spell.AddManaModifier(mana_mult);
@@ -152,9 +151,9 @@ public class Machine : Mod
     }
 }
 
-public class Spray : Mod
+public class Bleed : Mod
 {
-    public Spray()
+    public Bleed()
     {
         Dictionary<string, int> tempDict = new Dictionary<string, int>();
         tempDict["wave"] = GameManager.Instance.wave;
@@ -165,19 +164,14 @@ public class Spray : Mod
         ValueMultiplier damage_mult = new ValueMultiplier(this.localRPN.RPN_to_float(damage_multiplier));
         spell.AddDamageModifier(damage_mult);
 
-        ValueAdder mana_add = new ValueAdder(this.localRPN.RPN_to_int(mana_adder));
-        spell.AddManaModifier(mana_add);
+        ValueAdder cooldown_mult = new ValueAdder(this.localRPN.RPN_to_int(cooldown_multiplier));
+        spell.AddCooldownModifier(cooldown_mult);
 
-        spell.ChangeProjectileTrajectory(projectile_trajectory);
+        spell.AddOnHitEffect(new DamageTemp(bleed_damage, Damage.Type.PHYSICAL));
 
-        CoroutineManager.Instance.Run(ChangeTrajectoryAfterDelay(spell, 1f));
     }
 
-    private IEnumerator ChangeTrajectoryAfterDelay(ModifierSpell spell, float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        spell.ChangeProjectileTrajectory(second_projectile_trajectory);
-    }
+
 }
 
 

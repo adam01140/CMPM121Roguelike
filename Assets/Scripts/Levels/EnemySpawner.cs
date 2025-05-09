@@ -92,15 +92,31 @@ public class EnemySpawner : MonoBehaviour
         else
         {
             GameManager.Instance.player.GetComponent<PlayerController>().UpdateStats();
+            GameManager.Instance.player.GetComponent<PlayerController>().StartLevel();
             StartCoroutine(SpawnWave());
         }
     }
 
-     public void NewSpell()
+    public void NewSpellBase()
     {
-            GameManager.Instance.player.GetComponent<PlayerController>().StartLevel();
-            StartCoroutine(SpawnWave());
+        GameManager.Instance.player.GetComponent<PlayerController>().spellcaster.NewSpellBase();
+        GameManager.Instance.player.GetComponent<PlayerController>().UpdateStats();
+        StartCoroutine(SpawnWave());
     }
+    public void NewSpellMod()
+    {
+        GameManager.Instance.player.GetComponent<PlayerController>().spellcaster.NewSpellMod();
+        GameManager.Instance.player.GetComponent<PlayerController>().UpdateStats();
+        StartCoroutine(SpawnWave());
+    }
+    public void AddSpellMod()
+    {
+        GameManager.Instance.player.GetComponent<PlayerController>().spellcaster.AddSpellMod();
+        GameManager.Instance.player.GetComponent<PlayerController>().UpdateStats();
+
+        StartCoroutine(SpawnWave());
+    }
+
 
     public int RPN_to_int(string rpn, int enemy_base_hp = 0)
     {

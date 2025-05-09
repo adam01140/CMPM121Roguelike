@@ -1,5 +1,7 @@
 using UnityEngine;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 
 public class Hittable
 {
@@ -12,7 +14,7 @@ public class Hittable
 
     public GameObject owner;
 
-    public void Damage(Damage damage)
+    public void Damage(Damage damage, List<Damage> events = null)
     {
         EventBus.Instance.DoDamage(owner.transform.position, damage, this);
         hp -= damage.amount;
@@ -29,7 +31,15 @@ public class Hittable
             hp = 0;
             OnDeath();
         }
+        else if (events != null)
+        {
+            Debug.Log("Try to start dot ticks");
+            CoroutineManager.Instance.Run(this.DamageOverTimeTick(events));
+        }
+
+
     }
+
 
     public event Action OnDeath;
 
@@ -41,6 +51,18 @@ public class Hittable
         this.owner = owner;
     }
 
+
+    public IEnumerator DamageOverTimeTick(List<Damage> damageEvents)
+    {
+
+        yield return new WaitForSeconds(0.5f);
+        foreach (var damage in damageEvents)
+        {
+
+            this.Damage(damage, damageEvents);
+
+        }
+    }
     public void SetMaxHP(int max_hp)
     {
         float perc = this.hp * 1.0f / this.max_hp;

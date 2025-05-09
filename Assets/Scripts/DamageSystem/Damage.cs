@@ -8,12 +8,18 @@ public class Damage
     {
         PHYSICAL, ARCANE, NATURE, FIRE, ICE, DARK, LIGHT
     }
+    public enum EventType
+    {
+        SINGLE, DOT, HEAL
+    }
     public Type type;
-    public Damage(int amount, Type type)
+    public EventType eventType;
+    public Damage(int amount, Type type, EventType eventType = EventType.SINGLE)
     {
         this.amount = amount;
         this.baseDam = amount;
         this.type = type;
+        this.eventType = eventType;
     }
 
     public static Type TypeFromString(string type)

@@ -9,7 +9,7 @@ public class SpellCaster
     public int mana_reg;
     public int spell_power;
     public Hittable.Team team;
-    public Spell spell;
+    public ModifierSpell spell;
 
     public SpellBuilder builder;
 
@@ -32,8 +32,30 @@ public class SpellCaster
 
         this.spell_power = GameManager.Instance.wave * 10;
         this.builder = new SpellBuilder();
-        this.spell = builder.Build();
+        this.spell = builder.Build(this);
         this.spell.AssignOwner(this);
+    }
+
+    public void NewSpellBase()
+    {
+
+        this.spell = null;
+        this.spell = builder.BuildSameMod(this);
+        this.spell.AssignOwner(this);
+    }
+    public void NewSpellMod()
+    {
+        this.spell = null;
+        this.spell = builder.BuildSameBase(this);
+        this.spell.AssignOwner(this);
+    }
+    public void AddSpellMod()
+    {
+        builder.AddSpellMod(this.spell);
+    }
+    public void updateSpellPower()
+    {
+        this.spell_power = GameManager.Instance.wave * 10;
     }
 
     public IEnumerator Cast(Vector3 where, Vector3 target)

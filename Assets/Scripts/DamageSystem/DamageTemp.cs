@@ -5,9 +5,10 @@ public class DamageTemp
 {
     public string amount;
     public Damage.Type type;
-    public DamageTemp()
+    public DamageTemp(string amount, Damage.Type type)
     {
-
+        this.amount = amount;
+        this.type = type;
     }
 
 }

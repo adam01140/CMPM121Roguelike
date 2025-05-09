@@ -37,7 +37,6 @@ public class PlayerController : MonoBehaviour
         hp = new Hittable(5 * wave + 95, Hittable.Team.PLAYER, gameObject);
         hp.OnDeath += Die;
         hp.team = Hittable.Team.PLAYER;
-        Debug.Log("new spell");
 
         // tell UI elements what to show
         healthui.SetHealth(hp);
@@ -49,16 +48,15 @@ public class PlayerController : MonoBehaviour
         int wave = GameManager.Instance.wave;
         //spellcaster = new SpellCaster(wave * 10 + 90, wave + 10, Hittable.Team.PLAYER);
         StartCoroutine(spellcaster.ManaRegeneration());
-
+        spellcaster.updateSpellPower();
         hp = new Hittable(5 * wave + 95, Hittable.Team.PLAYER, gameObject);
         hp.OnDeath += Die;
         hp.team = Hittable.Team.PLAYER;
-        Debug.Log("no new spell");
 
         // tell UI elements what to show
         healthui.SetHealth(hp);
-        //manaui.SetSpellCaster(spellcaster);
-        //spellui.SetSpell(spellcaster.spell);
+        manaui.SetSpellCaster(spellcaster);
+        spellui.SetSpell(spellcaster.spell);
     }
 
     // Update is called once per frame

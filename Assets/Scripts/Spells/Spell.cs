@@ -28,10 +28,27 @@ public class Spell
     public Hittable.Team team;
     public RPN rpn;
 
+    public List<Damage> onHitEvents;
+
     public Spell()
     {
+        this.onHitEvents = new List<Damage>();
 
-
+    }
+    public Spell(Spell other)
+    {
+        this.name = other.name;
+        this.description = other.description;
+        this.icon = other.icon;
+        this.N = other.N;
+        this.spray = other.spray;
+        this.damage = new DamageTemp(other.damage.amount, other.damage.type);
+        this.mana_cost = other.mana_cost;
+        this.cooldown = other.cooldown;
+        this.projectile = other.projectile;
+        this.secondary_projectile = other.secondary_projectile;
+        this.team = other.team;
+        this.onHitEvents = new List<Damage>();
     }
 
     public void AssignOwner(SpellCaster owner)
@@ -147,12 +164,27 @@ public class Spell
         {
             if (this.damageFull != null)
             {
-                other.Damage(damageFull);
+                if (this.onHitEvents.Count > 0)
+                {
+                    other.Damage(damageFull, this.onHitEvents);
+                }
+                else
+                {
+                    other.Damage(damageFull);
+                }
             }
             else
             {
                 this.damageFull = new Damage(this.rpn.RPN_to_int(this.damage.amount), this.damage.type);
-                other.Damage(damageFull);
+                if (this.onHitEvents.Count > 0)
+                {
+                    other.Damage(damageFull, this.onHitEvents);
+                }
+                else
+                {
+                    other.Damage(damageFull);
+                }
+
             }
 
         }
@@ -168,6 +200,8 @@ public class ModifierSpell : Spell
     private List<ValueModifier> manaModifiers = new List<ValueModifier>();
     private List<ValueModifier> cooldownModifiers = new List<ValueModifier>();
     private List<ValueModifier> speedModifiers = new List<ValueModifier>();
+
+
 
     private int casts;
     private float delay;
@@ -186,6 +220,7 @@ public class ModifierSpell : Spell
         this.casts = 0;
         this.delay = 0.0f;
         this.splitSpread = 0.0f;
+        this.onHitEvents = inner.onHitEvents;
 
     }
 
@@ -200,13 +235,22 @@ public class ModifierSpell : Spell
     }
     public void AddMultiCastDelay(float newDelay)
     {
-        Debug.Log("old delay " + this.delay);
         this.delay += newDelay;
-        Debug.Log("new delay " + this.delay);
     }
     public void AddMutliCastSpread(float newSpread)
     {
         this.splitSpread += newSpread;
+    }
+
+    public void AddOnHitEffect(DamageTemp damageEvent)
+    {
+        Dictionary<string, int> tempDict = new Dictionary<string, int>();
+        tempDict["damage"] = this.GetDamage();
+        this.rpn = new RPN(tempDict);
+        Debug.Log(this.GetDamage());
+        Debug.Log((int)Math.Floor(this.rpn.RPN_to_float(damageEvent.amount)));
+        Damage damageEventTemp = new Damage((int)Math.Floor(this.rpn.RPN_to_float(damageEvent.amount)), damageEvent.type, Damage.EventType.DOT);
+        this.onHitEvents.Add(damageEventTemp);
     }
 
     public override int GetDamage()
@@ -267,26 +311,13 @@ public class ModifierSpell : Spell
         var proj = innerSpell.projectile;
         if (splitSpread != 0.0f)
         {
-            Vector3 randomOffset = new Vector3(UnityEngine.Random.Range(this.spray * -10.0f, this.spray * 10.0f), 0, 0);
-            GameManager.Instance.projectileManager.CreateProjectile(
-                0,
-                proj.trajectory,
-                where,
-                target - where + randomOffset,
-                finalSpeed,
-                innerSpell.OnHit
-            );
+            Debug.Log(this.innerSpell);
+            CoroutineManager.Instance.Run(innerSpell.Cast(where, target, team));
         }
         else
         {
-            GameManager.Instance.projectileManager.CreateProjectile(
-                0,
-                proj.trajectory,
-                where,
-                target - where,
-                finalSpeed,
-                innerSpell.OnHit
-            );
+            Debug.Log(this.innerSpell);
+            CoroutineManager.Instance.Run(innerSpell.Cast(where, target, team));
         }
 
 
@@ -395,6 +426,7 @@ public class ArcaneSpray : Spell
         Projectile projectile = this.projectile;
         this.team = team;
         int numProj = this.rpn.RPN_to_int(this.N);
+        Debug.Log(numProj);
         for (int x = 0; x < numProj; x++)
         {
             Vector3 randomOffset = new Vector3(UnityEngine.Random.Range(this.spray * -1.0f, this.spray), 0, 0);
@@ -436,19 +468,29 @@ public class ArcaneBounce : Spell
             }
         }
         Projectile projectile = this.secondary_projectile;
-        float currCircleOffset = 1.0f;
+        impact += Vector3.up;
         //int numProj = this.rpn.RPN_to_int(this.N);
         //float projOffsetDiff = 2.0f / (float)numProj;
-        for (int x = 0; x < 1; x++)
-        {
-            float radAddPi = currCircleOffset * Mathf.PI;
-            Vector3 targetOffset = new Vector3(impact.x - (Mathf.Sin(radAddPi) * 100.0f), impact.y - (Mathf.Cos(radAddPi) * 100.0f), impact.z);
-            GameManager.Instance.projectileManager.CreateProjectile(0, projectile.trajectory, impact, targetOffset, this.rpn.RPN_to_float(projectile.speed), this.OnHit);
-        }
+        GameManager.Instance.projectileManager.CreateProjectile(0, projectile.trajectory, impact, impact + Vector3.up, this.rpn.RPN_to_float(projectile.speed), this.SecondaryOnHit);
 
 
     }
- 
+    public void SecondaryOnHit(Hittable other, Vector3 impact)
+    {
+        if (other.team != team)
+        {
+            if (this.damageFull != null)
+            {
+                other.Damage(damageFull);
+            }
+            else
+            {
+                damageFull = new Damage(this.rpn.RPN_to_int(damage.amount), damage.type);
+                other.Damage(damageFull);
+            }
+        }
+    }
+
     ArcaneBounce() : base()
     {
 

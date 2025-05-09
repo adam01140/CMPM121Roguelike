@@ -15,19 +15,20 @@ public class PlayerStatTextManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (GameManager.Instance.state == GameManager.GameState.WAVEEND )
+        if (GameManager.Instance.state == GameManager.GameState.WAVEEND)
         {
-            Debug.Log(GameManager.Instance.player.GetComponent<PlayerController>().spellcaster.spell.GetName());
-            temp.text = "Damage Dealt: " + GameManager.Instance.damageDealt +
-                "\nDamage Received: " + GameManager.Instance.damageReceived +
-                "\nTime Spent: " + GameManager.Instance.timeSpent +
-                "\nNew Spell: " + GameManager.Instance.projectileManager.projectiles[0].name;
-        }
-        else if (GameManager.Instance.state == GameManager.GameState.GAMEOVER){
             temp.text = "Damage Dealt: " + GameManager.Instance.damageDealt +
                 "\nDamage Received: " + GameManager.Instance.damageReceived +
                 "\nTime Spent: " + GameManager.Instance.timeSpent;
-        }else{
+        }
+        else if (GameManager.Instance.state == GameManager.GameState.GAMEOVER)
+        {
+            temp.text = "Damage Dealt: " + GameManager.Instance.damageDealt +
+                "\nDamage Received: " + GameManager.Instance.damageReceived +
+                "\nTime Spent: " + GameManager.Instance.timeSpent;
+        }
+        else
+        {
             temp.text = "";
         }
     }
