@@ -2,16 +2,16 @@ using UnityEngine;
 
 public class Relic : MonoBehaviour
 {
-    
+
     public string Name { get; private set; }
     public int SpriteId { get; private set; }
     public RelicTrigger Trigger { get; private set; }
     public RelicEffect Effect { get; private set; }
 
-    public Relic(string name, int spriteId, RelicTrigger trigger, RelicEffect effect)
+    public Relic(string name, int sprite, RelicTrigger trigger, RelicEffect effect)
     {
         Name = name;
-        SpriteId = spriteId;
+        SpriteId = sprite;
         Trigger = trigger;
         Effect = effect;
 
