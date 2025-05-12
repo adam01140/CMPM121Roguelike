@@ -242,15 +242,17 @@ public class ModifierSpell : Spell
         this.splitSpread += newSpread;
     }
 
-    public void AddOnHitEffect(DamageTemp damageEvent)
+    public void AddOnHitEffect(DamageTemp damageEvent, int instancesToQue = 5)
     {
         Dictionary<string, int> tempDict = new Dictionary<string, int>();
         tempDict["damage"] = this.GetDamage();
         this.rpn = new RPN(tempDict);
-        Debug.Log(this.GetDamage());
-        Debug.Log((int)Math.Floor(this.rpn.RPN_to_float(damageEvent.amount)));
         Damage damageEventTemp = new Damage((int)Math.Floor(this.rpn.RPN_to_float(damageEvent.amount)), damageEvent.type, Damage.EventType.DOT);
-        this.onHitEvents.Add(damageEventTemp);
+        for (int i = 0; i <= instancesToQue; i++)
+        {
+            this.onHitEvents.Add(damageEventTemp);
+        }
+
     }
 
     public override int GetDamage()

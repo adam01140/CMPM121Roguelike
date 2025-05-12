@@ -55,11 +55,12 @@ public class Hittable
     public IEnumerator DamageOverTimeTick(List<Damage> damageEvents)
     {
 
-        yield return new WaitForSeconds(0.5f);
+
         foreach (var damage in damageEvents)
         {
 
-            this.Damage(damage, damageEvents);
+            this.Damage(damage);
+            yield return new WaitForSeconds(0.5f);
 
         }
     }
