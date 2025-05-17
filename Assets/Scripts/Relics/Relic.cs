@@ -1,5 +1,5 @@
 using UnityEngine;
-
+using System.Collections.Generic;
 public class Relic : MonoBehaviour
 {
 
@@ -46,21 +46,6 @@ public abstract class RelicEffect
     public abstract void Apply();
 }
 
-public class TakeDamageTrigger : RelicTrigger
-{
-    public override void Register()
-    {
-        //maybe something like this?
-        //EventBus.OnTakeDamage += OnDamageTaken;
-        EventBus.Instance.OnDamage += OnDamageTaken;
-    }
-
-    private void OnDamageTaken(Vector3 where, Damage dmg, Hittable target)
-    {
-
-    }
-}
-
 public class GainManaEffect : RelicEffect
 {
     private int amount;
@@ -78,6 +63,60 @@ public class GainManaEffect : RelicEffect
     }
 
 }
+
+public class GainSpellPowerEffect : RelicEffect
+{
+    private string amountString;
+    private Queue<int> amountApplied;
+
+    private RPN rpn;
+
+    public GainSpellPowerEffect(string amountString)
+    {
+        this.amountString = amountString;
+        Dictionary<string, int> tempDict = new Dictionary<string, int>
+        {
+            { "wave", GameManager.Instance.wave }
+        };
+        rpn = new RPN(tempDict);
+    }
+
+    public override void Apply()
+    {
+        Dictionary<string, int> tempDict = new Dictionary<string, int>
+        {
+            { "wave", GameManager.Instance.wave }
+        };
+        rpn.updateRPNVars(tempDict);
+        GameManager.Instance.player.GetComponent<PlayerController>().spellcaster.spell_power += rpn.RPN_to_int(amountString);
+        amountApplied.Enqueue(rpn.RPN_to_int(amountString));
+    }
+
+    public void RemoveBuff()
+    {
+
+        GameManager.Instance.player.GetComponent<PlayerController>().spellcaster.spell_power -= amountApplied.Dequeue();
+    }
+}
+
+
+
+public class TakeDamageTrigger : RelicTrigger
+{
+    public override void Register()
+    {
+        //maybe something like this?
+        //EventBus.OnTakeDamage += OnDamageTaken;
+        EventBus.Instance.OnDamage += OnDamageTaken;
+    }
+
+    private void OnDamageTaken(Vector3 where, Damage dmg, Hittable target)
+    {
+
+    }
+}
+
+
 
 public class CastSpellTrigger : RelicTrigger
 {
@@ -122,29 +161,24 @@ public class CancelOnMoveTrigger : RelicTrigger
     }
 }
 
-public class GainSpellPowerEffect : RelicEffect
+public class OnKillTrigger : RelicTrigger
 {
-    private int baseAmount;
-    private int perWave;
-
-    public GainSpellPowerEffect(int baseAmount, int perWave)
+    public override void Register()
     {
-        this.baseAmount = baseAmount;
-        this.perWave = perWave;
+        EventBus.Instance.OnEnemyKilled += OnEnemyKill;
     }
 
-    public override void Apply()
+    private void OnEnemyKill(Hittable enemy)
     {
-        GameManager.Instance.player.GetComponent<PlayerController>().spellcaster.spell_power += baseAmount;
-        // apply the spell‐power buff here
-    }
-
-    public void RemoveBuff()
-    {
-        GameManager.Instance.player.GetComponent<PlayerController>().spellcaster.spell_power -= baseAmount;
-        // undo the spell‐power buff here
+        //casting as diff class
+        var spellPower = effect as GainSpellPowerEffect;
+        if (spellPower != null)
+        {
+            spellPower.RemoveBuff();
+        }
     }
 }
+
 
 public class StandStillTrigger : RelicTrigger
 {

@@ -58,11 +58,14 @@ public class SpellCaster
         this.spell_power = GameManager.Instance.wave * 10;
     }
 
-    public void AddMana(int amount){
-        if (this.mana + amount > this.max_mana){
+    public void AddMana(int amount)
+    {
+        if (this.mana + amount > this.max_mana)
+        {
             this.mana = this.max_mana;
         }
-        else{
+        else
+        {
             this.mana += amount;
         }
     }
@@ -72,6 +75,7 @@ public class SpellCaster
         if (mana >= spell.GetManaCost() && spell.IsReady())
         {
             mana -= spell.GetManaCost();
+            EventBus.Instance.DoCastSpell(this.spell);
             yield return spell.Cast(where, target, team);
         }
         yield break;

@@ -13,6 +13,11 @@ public class RPN
     {
         this.variables = variables;
     }
+
+    public void updateRPNVars(Dictionary<string, int> variables)
+    {
+        this.variables = variables;
+    }
     public int RPN_to_int(string rpn)
     {
 

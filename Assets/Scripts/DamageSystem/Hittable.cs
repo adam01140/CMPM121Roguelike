@@ -30,6 +30,7 @@ public class Hittable
         {
             hp = 0;
             OnDeath();
+            EventBus.Instance.DoEnemyKilled(this);
         }
         else if (events != null)
         {
