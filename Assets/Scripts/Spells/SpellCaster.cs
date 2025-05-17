@@ -58,6 +58,15 @@ public class SpellCaster
         this.spell_power = GameManager.Instance.wave * 10;
     }
 
+    public void AddMana(int amount){
+        if (this.mana + amount > this.max_mana){
+            this.mana = this.max_mana;
+        }
+        else{
+            this.mana += amount;
+        }
+    }
+
     public IEnumerator Cast(Vector3 where, Vector3 target)
     {
         if (mana >= spell.GetManaCost() && spell.IsReady())
