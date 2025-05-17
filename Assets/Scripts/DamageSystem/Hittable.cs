@@ -3,7 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-public class Hittable : MonoBehaviour
+public class Hittable
 {
 
     public enum Team { PLAYER, MONSTERS }

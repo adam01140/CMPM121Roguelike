@@ -57,10 +57,7 @@ public class TakeDamageTrigger : RelicTrigger
 
     private void OnDamageTaken(Vector3 where, Damage dmg, Hittable target)
     {
-        if (target.CompareTag("Player")){
-            effect.Apply();
-        }
-        
+
     }
 }
 
