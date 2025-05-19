@@ -23,17 +23,25 @@ public class SpellCaster
         }
     }
 
-    public SpellCaster(int mana, int mana_reg, Hittable.Team team)
+    public SpellCaster(int mana, int mana_reg, Hittable.Team team, int spell_power)
     {
         this.mana = mana;
         this.max_mana = mana;
         this.mana_reg = mana_reg;
         this.team = team;
+        this.spell_power = spell_power;
 
-        this.spell_power = GameManager.Instance.wave * 10;
         this.builder = new SpellBuilder();
         this.spell = builder.Build(this);
         this.spell.AssignOwner(this);
+    }
+
+    public void UpdateStats(int mana, int mana_reg, Hittable.Team team, int spell_power)
+    {
+        this.max_mana = mana;
+        this.mana_reg = mana_reg;
+        this.team = team;
+        this.spell_power = spell_power;
     }
 
     public void NewSpellBase()

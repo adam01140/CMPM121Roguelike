@@ -1,5 +1,7 @@
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
+using System.Collections.Generic;
 
 public class RewardScreenManager : MonoBehaviour
 {
@@ -9,9 +11,19 @@ public class RewardScreenManager : MonoBehaviour
     public GameObject changeSpellButton;
     public GameObject changeModButton;
     public GameObject addModButton;
+
+    public GameObject relicIcon1;
+    public GameObject relicText1;
+    public GameObject relicIcon2;
+    public GameObject relicText2;
+
+    private bool relicsSet;
+
     void Start()
     {
         rewardUI.SetActive(false);
+        relicsSet = false;
+
     }
 
     // Update is called once per frame
@@ -33,15 +45,28 @@ public class RewardScreenManager : MonoBehaviour
                 changeSpellButton.SetActive(true);
                 changeModButton.SetActive(true);
                 addModButton.SetActive(true);
-
+                if (/*GameManager.Instance.wave % 3 == 0*/ !relicsSet)
+                {
+                    RelicManager relicManager = new RelicManager();
+                    setRelicOptions(relicManager.genRelicSelection());
+                    relicsSet = true;
+                }
             }
 
         }
         else
         {
             rewardUI.SetActive(false);
+            relicsSet = false;
 
         }
+    }
+
+    public void setRelicOptions(List<Relic> relicSelection)
+    {
+        GameManager.Instance.relicIconManager.PlaceSprite(relicSelection[0].SpriteId, relicIcon1.GetComponent<Image>());
+        GameManager.Instance.player.GetComponent<PlayerController>().SetPlayerRelic(relicSelection[0]);
+        GameManager.Instance.relicIconManager.PlaceSprite(relicSelection[1].SpriteId, relicIcon2.GetComponent<Image>());
     }
 
 

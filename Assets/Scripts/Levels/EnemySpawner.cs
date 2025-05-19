@@ -92,7 +92,6 @@ public class EnemySpawner : MonoBehaviour
         else
         {
             GameManager.Instance.player.GetComponent<PlayerController>().UpdateStats();
-            GameManager.Instance.player.GetComponent<PlayerController>().StartLevel();
             StartCoroutine(SpawnWave());
         }
     }
@@ -181,6 +180,10 @@ public class EnemySpawner : MonoBehaviour
 
     IEnumerator SpawnWave()
     {
+        RelicManager relicManager = new RelicManager();
+        List<Relic> relicSelection = relicManager.genRelicSelection();
+        Debug.Log(relicSelection[0].Name + " " + relicSelection[0].Trigger + " " + relicSelection[0].Effect);
+        GameManager.Instance.player.GetComponent<PlayerController>().SetPlayerRelic(relicSelection[0]);
         GameManager.Instance.state = GameManager.GameState.COUNTDOWN;
         GameManager.Instance.countdown = 3;
         for (int i = 3; i > 0; i--)

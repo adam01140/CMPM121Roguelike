@@ -20,6 +20,8 @@ public class PlayerController : MonoBehaviour
 
     public EnemySpawner enemySpawner;
 
+    public Relic relic;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -31,7 +33,7 @@ public class PlayerController : MonoBehaviour
     public void StartLevel()
     {
         int wave = GameManager.Instance.wave;
-        spellcaster = new SpellCaster(wave * 10 + 90, wave + 10, Hittable.Team.PLAYER);
+        spellcaster = new SpellCaster(wave * 10 + 90, wave + 10, Hittable.Team.PLAYER, 10 * wave);
         StartCoroutine(spellcaster.ManaRegeneration());
 
         hp = new Hittable(5 * wave + 95, Hittable.Team.PLAYER, gameObject);
@@ -63,6 +65,13 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
 
+    }
+
+    public void SetPlayerRelic(Relic relic)
+    {
+        this.relic = relic;
+        this.relic.Trigger.Initialize(this.relic.Effect);
+        this.relic.Trigger.Register();
     }
 
     void OnAttack(InputValue value)
