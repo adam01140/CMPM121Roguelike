@@ -64,7 +64,8 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        Debug.Log("Hu?");
+        EventBus.Instance.DoUpdate(Time.deltaTime);
     }
 
     public void SetPlayerRelic(Relic relic)
@@ -72,6 +73,12 @@ public class PlayerController : MonoBehaviour
         this.relic = relic;
         this.relic.Trigger.Initialize(this.relic.Effect);
         this.relic.Trigger.Register();
+        if (this.relic.Until != null)
+        {
+            this.relic.Until.Initialize(this.relic.Effect);
+            this.relic.Until.Register();
+        }
+
     }
 
     void OnAttack(InputValue value)

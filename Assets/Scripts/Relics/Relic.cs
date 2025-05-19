@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
+using Unity.VisualScripting;
+using System.Runtime.CompilerServices;
 public class Relic
 {
 
@@ -8,13 +10,16 @@ public class Relic
     public RelicTrigger Trigger { get; private set; }
     public RelicEffect Effect { get; private set; }
 
-    public Relic(string name, int sprite, RelicTrigger trigger, RelicEffect effect)
+    public RelicTrigger Until { get; private set; }
+
+
+    public Relic(string name, int sprite, RelicTrigger trigger, RelicEffect effect, RelicTrigger until)
     {
-        Debug.Log("wharg?");
         Name = name;
         SpriteId = sprite;
         Trigger = trigger;
         Effect = effect;
+        Until = until;
 
 
     }
@@ -25,6 +30,7 @@ public class Relic
         SpriteId = other.SpriteId;
         Trigger = other.Trigger?.Clone();
         Effect = other.Effect?.Clone();
+        Until = other.Until?.Clone();
 
     }
 
@@ -55,8 +61,23 @@ public abstract class RelicTrigger
 public abstract class RelicEffect
 {
     public abstract void Apply();
+
+    public virtual void Remove()
+    {
+
+    }
     public abstract RelicEffect Clone();
 }
+
+
+
+
+
+
+
+
+
+
 
 public class GainManaEffect : RelicEffect
 {
@@ -74,16 +95,21 @@ public class GainManaEffect : RelicEffect
         Debug.Log($"Gained {amount} mana from relic.");
     }
 
+
     public override RelicEffect Clone()
     {
         return new GainManaEffect(this.amount);
     }
 }
 
+
+
 public class GainSpellPowerEffect : RelicEffect
 {
     private string amountString;
-    private Queue<int> amountApplied;
+    private int amountApplied;
+    private bool applied;
+    private int casts;
     private RPN rpn;
 
     public GainSpellPowerEffect(string amountString)
@@ -94,23 +120,43 @@ public class GainSpellPowerEffect : RelicEffect
             { "wave", GameManager.Instance.wave }
         };
         rpn = new RPN(tempDict);
+        applied = false;
+        casts = 0;
     }
 
     public override void Apply()
     {
-        Debug.Log("Effect Applied");
+
         Dictionary<string, int> tempDict = new Dictionary<string, int>
         {
             { "wave", GameManager.Instance.wave }
         };
         rpn.updateRPNVars(tempDict);
-        GameManager.Instance.player.GetComponent<PlayerController>().spellcaster.spell_power += 5;//rpn.RPN_to_int(amountString);
-        // amountApplied.Enqueue(rpn.RPN_to_int(amountString));
+        if (applied == false)
+        {
+            Debug.Log("Spellpower Applied " + amountString);
+            GameManager.Instance.player.GetComponent<PlayerController>().spellcaster.spell_power += rpn.RPN_to_int(amountString);
+            amountApplied = rpn.RPN_to_int(amountString);
+            applied = true;
+            casts = 1;
+        }
+
     }
 
-    public void RemoveBuff()
+    public override void Remove()
     {
-        GameManager.Instance.player.GetComponent<PlayerController>().spellcaster.spell_power -= amountApplied.Dequeue();
+
+        if (applied == true && casts <= 0)
+        {
+            Debug.Log("Spellpower Removed");
+            GameManager.Instance.player.GetComponent<PlayerController>().spellcaster.spell_power -= amountApplied;
+            applied = false;
+        }
+        else if (applied == true)
+        {
+            casts -= 1;
+        }
+
     }
 
     public override RelicEffect Clone()
@@ -118,6 +164,17 @@ public class GainSpellPowerEffect : RelicEffect
         return new GainSpellPowerEffect(this.amountString);
     }
 }
+
+
+
+
+
+
+
+
+
+
+
 
 public class TakeDamageTrigger : RelicTrigger
 {
@@ -130,7 +187,10 @@ public class TakeDamageTrigger : RelicTrigger
 
     private void OnDamageTaken(Vector3 where, Damage dmg, Hittable target)
     {
-        effect.Apply();
+        if (target.team == Hittable.Team.PLAYER)
+        {
+            effect.Apply();
+        }
     }
 
     public override RelicTrigger Clone()
@@ -139,7 +199,11 @@ public class TakeDamageTrigger : RelicTrigger
     }
 }
 
-public class CastSpellTrigger : RelicTrigger
+
+
+
+
+public class OnCastSpellTrigger : RelicTrigger
 {
     public override void Register()
     {
@@ -153,39 +217,33 @@ public class CastSpellTrigger : RelicTrigger
 
     public override RelicTrigger Clone()
     {
-        return new CastSpellTrigger();
+        return new OnCastSpellTrigger();
     }
 }
 
 
-// var jadeElephant = new Relic(
-//     "Jade Elephant",
-//     sprite: 1,
-//     trigger: new StandStillTrigger(3f),
-//     effect: new GainSpellPowerEffect(baseAmount: 10, perWave: 5)
-// );
 
-// jadeElephant.Trigger = new CompositeTrigger(
-//     new StandStillTrigger(3f),
-//     new CancelOnMoveTrigger()
-// );
-public class CancelOnMoveTrigger : RelicTrigger
+
+
+public class OnCastSpellTriggerUntil : RelicTrigger
 {
     public override void Register()
     {
-        EventBus.Instance.OnMove += OnPlayerMove;
+        EventBus.Instance.OnSpellCast += OnSpellCast;
     }
 
-    private void OnPlayerMove(Vector3 newPos)
+    private void OnSpellCast(Spell spell)
     {
-        effect.Apply();
+        effect.Remove();
     }
 
     public override RelicTrigger Clone()
     {
-        return new CancelOnMoveTrigger();
+        return new OnCastSpellTriggerUntil();
     }
 }
+
+
 
 public class OnKillTrigger : RelicTrigger
 {
@@ -206,10 +264,15 @@ public class OnKillTrigger : RelicTrigger
 }
 
 
+
+
+
 public class StandStillTrigger : RelicTrigger
 {
     private float requiredSeconds;
     private float elapsed = 0f;
+
+    private bool active;
 
     public StandStillTrigger(float seconds)
     {
@@ -224,16 +287,19 @@ public class StandStillTrigger : RelicTrigger
 
     private void OnPlayerMove(Vector3 newPos)
     {
+        active = false;
         elapsed = 0f;
+
     }
 
     private void OnUpdate(float deltaTime)
     {
         elapsed += deltaTime;
-        if (elapsed >= requiredSeconds)
+        if (elapsed >= requiredSeconds && active == false)
         {
             effect.Apply();
             elapsed = 0f;
+            active = true;
         }
     }
 
@@ -244,39 +310,25 @@ public class StandStillTrigger : RelicTrigger
 }
 
 
-//
-// Cancels out spell up there
-//
-// var goldenMask = new Relic(
-//     "Golden Mask",
-//     sprite: 2,
-//     trigger: new TakeDamageTrigger(),
-//     effect: new GainSpellPowerEffect(100)
-// );
 
-// // also register the cancel‐on‐cast trigger
-// goldenMask.Trigger = new CompositeTrigger(
-//     new TakeDamageTrigger(),
-//     new CancelOnCastSpellTrigger()
-// );
-public class CancelOnCastSpellTrigger : RelicTrigger
+
+
+public class OnMoveTriggerUntil : RelicTrigger //Specifically a "Until" trigger so the relic effect can be properly removed or updated
 {
     public override void Register()
     {
-        EventBus.Instance.OnSpellCast += OnSpellCast;
+        EventBus.Instance.OnMove += OnMove;
     }
 
-    private void OnSpellCast(Spell spell)
+    private void OnMove(Vector3 vec)
     {
-        var spellpower = effect as GainSpellPowerEffect;
-        if (spellpower != null)
-        {
-            spellpower.RemoveBuff();
-        }
+        effect.Remove();
     }
 
     public override RelicTrigger Clone()
     {
-        return new CancelOnCastSpellTrigger();
+        return new OnMoveTriggerUntil();
     }
 }
+
+

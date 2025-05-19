@@ -52,7 +52,22 @@ public class RelicBuilder
             // Use your factory methods here
             RelicTrigger trigger = RelicTriggerFactory.Create(relicJson["trigger"]);
             RelicEffect effect = RelicEffectFactory.Create(relicJson["effect"]);
-            Relic relic = new Relic(name, sprite, trigger, effect);
+            var untilToken = relicJson["effect"]?["until"];
+            RelicTrigger until = null;
+            if (untilToken != null)
+            {
+                string untilType = untilToken.ToString();
+                switch (untilType)
+                {
+                    case "move":
+                        until = new OnMoveTriggerUntil();
+                        break;
+                    case "cast-spell":
+                        until = new OnCastSpellTriggerUntil();
+                        break;
+                }
+            }
+            Relic relic = new Relic(name, sprite, trigger, effect, until);
             allRelics.Add(relic);
         }
     }
@@ -94,7 +109,6 @@ public static class RelicTriggerFactory
                 return new StandStillTrigger(seconds);
             case "on-kill":
                 return new OnKillTrigger();
-            // Add more cases as needed
             default:
                 Debug.LogWarning($"Unknown trigger type: {type}");
                 return null;
