@@ -15,6 +15,10 @@ public class PlayerController : MonoBehaviour
     public SpellUI spellui;
 
     public int speed;
+    int maxHealth;
+    int maxMana;  
+    int regenRate; 
+    int spellPower;  
 
     public Unit unit;
 
@@ -22,21 +26,28 @@ public class PlayerController : MonoBehaviour
 
     public Relic relic;
 
+    public TextAsset classesJson;
+    public RPN rpn;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         unit = GetComponent<Unit>();
         GameManager.Instance.player = gameObject;
+        classesJson = Resources.Load<TextAsset>("classes");
 
     }
 
     public void StartLevel()
     {
+        updateClass();
+
+        
         int wave = GameManager.Instance.wave;
-        spellcaster = new SpellCaster(wave * 10 + 90, wave + 10, Hittable.Team.PLAYER, 10 * wave);
+        spellcaster = new SpellCaster(maxMana, regenRate, Hittable.Team.PLAYER, spellPower);
         StartCoroutine(spellcaster.ManaRegeneration());
 
-        hp = new Hittable(5 * wave + 95, Hittable.Team.PLAYER, gameObject);
+        hp = new Hittable(maxHealth, Hittable.Team.PLAYER, gameObject);
         hp.OnDeath += Die;
         hp.team = Hittable.Team.PLAYER;
 
@@ -45,13 +56,18 @@ public class PlayerController : MonoBehaviour
         manaui.SetSpellCaster(spellcaster);
         spellui.SetSpell(spellcaster.spell);
     }
+
     public void UpdateStats()
     {
+
+        updateClass();
+
+
         int wave = GameManager.Instance.wave;
         //spellcaster = new SpellCaster(wave * 10 + 90, wave + 10, Hittable.Team.PLAYER);
         StartCoroutine(spellcaster.ManaRegeneration());
         spellcaster.updateSpellPower();
-        hp = new Hittable(5 * wave + 95, Hittable.Team.PLAYER, gameObject);
+        hp = new Hittable(maxHealth, Hittable.Team.PLAYER, gameObject);
         hp.OnDeath += Die;
         hp.team = Hittable.Team.PLAYER;
 
@@ -59,6 +75,25 @@ public class PlayerController : MonoBehaviour
         healthui.SetHealth(hp);
         manaui.SetSpellCaster(spellcaster);
         spellui.SetSpell(spellcaster.spell);
+    }
+
+    private void updateClass(){
+        //parse through classes.json
+        int wave = GameManager.Instance.wave;
+        var root = JObject.Parse(classesJson.text);
+        var mageData = (JObject)root["mage"];
+        var vars = new Dictionary<string,int> {{ "wave", wave }};
+        rpn = new RPN(vars);
+
+        //update stats
+        maxHealth = rpn.RPN_to_int(mageData["health"].ToString());
+        maxMana = rpn.RPN_to_int(mageData["mana"].ToString());
+        regenRate = rpn.RPN_to_int(mageData["mana_regeneration"].ToString());
+        spellPower = rpn.RPN_to_int(mageData["spellpower"].ToString());
+        speed = rpn.RPN_to_int(mageData["speed"].ToString());
+
+        Debug.Log("maxHealth " + maxHealth);
+        Debug.Log("maxMana " + maxMana);
     }
 
     // Update is called once per frame
