@@ -83,7 +83,6 @@ public class SpellBuilder
     public ModifierSpell GetRandomBase(SpellCaster owner)
     {
         int index = Random.Range(0, allSpellsBases.Count);
-        Debug.Log(index);
         this.lastBaseIndex = index;
         Spell temp = allSpellsBases[index];
         temp.AssignOwner(owner);

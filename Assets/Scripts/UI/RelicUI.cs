@@ -15,20 +15,17 @@ public class RelicUI : MonoBehaviour
     void Start()
     {
         // if a player has relics, this is how you *could* show them
-        /*
         Relic r = player.relics[index];
-        GameManager.Instance.relicIconManager.PlaceSprite(r.sprite, icon);
-        */
+        GameManager.Instance.relicIconManager.PlaceSprite(r.SpriteId, icon);
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        // Relics could have labels and/or an active-status
-        /*
         Relic r = player.relics[index];
-        label.text = r.GetLabel();
-        highlight.SetActive(r.IsActive());
-        */
+        //label.text = r.GetLabel();
+        //highlight.SetActive(r.IsActive());
+
     }
 }

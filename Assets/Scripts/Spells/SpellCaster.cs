@@ -61,9 +61,9 @@ public class SpellCaster
     {
         builder.AddSpellMod(this.spell);
     }
-    public void updateSpellPower()
+    public void updateSpellPower(int spellpower)
     {
-        this.spell_power = GameManager.Instance.wave * 10;
+        this.spell_power = spellpower;
     }
 
     public void AddMana(int amount)

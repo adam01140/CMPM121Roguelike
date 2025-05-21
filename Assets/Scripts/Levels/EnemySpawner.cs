@@ -13,6 +13,7 @@ public class EnemySpawner : MonoBehaviour
 {
     public Image level_selector;
     public GameObject button;
+    public GameObject classSelectButton;
     public GameObject enemy;
     public SpawnPoint[] SpawnPoints;
     public int currentWave { get; private set; } = 1;
@@ -69,11 +70,37 @@ public class EnemySpawner : MonoBehaviour
 
     }
 
-    public void StartLevel(string levelname)
+    public void ClassSelect(string levelname)
+    {
+        foreach (Transform child in level_selector.transform)
+        {
+            child.gameObject.SetActive(false);
+        }
+        //Icky but like... it works, would be nice to reuse the button from above
+        GameObject selector_mage = Instantiate(classSelectButton, level_selector.transform);
+        selector_mage.transform.localPosition = new Vector3(-100, 30);
+        selector_mage.GetComponent<MenuSelectorController>().spawner = this;
+        selector_mage.GetComponent<MenuSelectorController>().SetLevel(levelname);
+        selector_mage.GetComponent<MenuSelectorController>().SetClass("mage");
+        GameObject selector_battlemage = Instantiate(classSelectButton, level_selector.transform);
+        selector_battlemage.transform.localPosition = new Vector3(100, 30);
+        selector_battlemage.GetComponent<MenuSelectorController>().spawner = this;
+        selector_battlemage.GetComponent<MenuSelectorController>().SetLevel(levelname);
+        selector_battlemage.GetComponent<MenuSelectorController>().SetClass("battlemage");
+        GameObject selector_warlock = Instantiate(classSelectButton, level_selector.transform);
+        selector_warlock.transform.localPosition = new Vector3(0, -30);
+        selector_warlock.GetComponent<MenuSelectorController>().spawner = this;
+        selector_warlock.GetComponent<MenuSelectorController>().SetLevel(levelname);
+        selector_warlock.GetComponent<MenuSelectorController>().SetClass("warlock");
+    }
+
+
+    public void StartLevel(string levelname, string classname)
     {
         level_selector.gameObject.SetActive(false);
         // this is not nice: we should not have to be required to tell the player directly that the level is starting
         current_level = levelname;
+        GameManager.Instance.player.GetComponent<PlayerController>().selectedClass = classname;
         GameManager.Instance.player.GetComponent<PlayerController>().StartLevel();
         StartCoroutine(SpawnWave());
     }
@@ -180,10 +207,7 @@ public class EnemySpawner : MonoBehaviour
 
     IEnumerator SpawnWave()
     {
-        RelicManager relicManager = new RelicManager();
-        List<Relic> relicSelection = relicManager.genRelicSelection();
-        Debug.Log(relicSelection[0].Name + " " + relicSelection[0].Trigger + " " + relicSelection[0].Effect);
-        GameManager.Instance.player.GetComponent<PlayerController>().SetPlayerRelic(relicSelection[0]);
+        EventBus.Instance.DoStartWave(GameManager.Instance.wave);
         GameManager.Instance.state = GameManager.GameState.COUNTDOWN;
         GameManager.Instance.countdown = 3;
         for (int i = 3; i > 0; i--)

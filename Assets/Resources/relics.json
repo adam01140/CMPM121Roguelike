@@ -53,5 +53,47 @@
             "type": "gain-mana",
             "amount": "25"
         }
+    },
+    {
+        "name": "Feline Friend",
+        "sprite": 15,
+        "trigger": {
+            "description": "After not casting a spell for 5 second",
+            "type": "no-cast",
+            "amount": "5"
+        },
+        "effect": {
+            "description": "you gain 5 speed",
+            "type": "gain-speed",
+            "amount": "3",
+            "until": "cast-spell"
+        }
+    },
+    {
+        "name": "Bloody Mask",
+        "sprite": 4,
+        "trigger": {
+            "description": "After killing an enemy",
+            "type": "on-kill"
+        },
+        "effect": {
+            "description": "recover 10 health",
+            "type": "gain-health",
+            "amount": "10"
+        }
+    },
+    {
+        "name": "Delicate Bubble",
+        "sprite": 13,
+        "trigger": {
+            "description": "After starting a wave",
+            "type": "on-start-wave"
+        },
+        "effect": {
+            "description": "gain 3 speed until take damage",
+            "type": "gain-speed",
+            "amount": "3",
+            "until": "take-damage"
+        }
     }
 ]

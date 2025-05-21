@@ -43,8 +43,19 @@ public class EventBus
     public event Action<float> OnUpdate;
     public void DoUpdate(float dt)
     {
-        Debug.Log("Wha");
         OnUpdate?.Invoke(dt);
+    }
+
+    public event Action<Relic> OnRelicGained;
+    public void DoRelicGained(Relic r)
+    {
+        OnRelicGained?.Invoke(r);
+    }
+
+    public event Action<int> OnStartWave;
+    public void DoStartWave(int wave)
+    {
+        OnStartWave?.Invoke(wave);
     }
 
 

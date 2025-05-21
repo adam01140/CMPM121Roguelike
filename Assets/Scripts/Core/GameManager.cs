@@ -60,7 +60,7 @@ public class GameManager
 
     private GameManager()
     {
-        wave = 0;
+        wave = 1;
         damageDealt = 0;
         damageReceived = 0;
         timeSpent = 0;
@@ -68,7 +68,7 @@ public class GameManager
     }
     public void resetGame()
     {
-        wave = 0;
+        wave = 1;
         damageDealt = 0;
         damageReceived = 0;
         timeSpent = 0;

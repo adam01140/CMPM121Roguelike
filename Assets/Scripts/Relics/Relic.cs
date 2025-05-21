@@ -7,6 +7,7 @@ public class Relic
 
     public string Name { get; private set; }
     public int SpriteId { get; private set; }
+    public string description;
     public RelicTrigger Trigger { get; private set; }
     public RelicEffect Effect { get; private set; }
 
@@ -20,6 +21,8 @@ public class Relic
         Trigger = trigger;
         Effect = effect;
         Until = until;
+        description = trigger.description + " " + effect.description;
+
 
 
     }
@@ -31,6 +34,7 @@ public class Relic
         Trigger = other.Trigger?.Clone();
         Effect = other.Effect?.Clone();
         Until = other.Until?.Clone();
+        description = other.description;
 
     }
 
@@ -47,6 +51,7 @@ public class Relic
 public abstract class RelicTrigger
 {
     protected RelicEffect effect;
+    public string description;
 
     public void Initialize(RelicEffect effect)
     {
@@ -60,6 +65,8 @@ public abstract class RelicTrigger
 
 public abstract class RelicEffect
 {
+
+    public string description;
     public abstract void Apply();
 
     public virtual void Remove()
@@ -90,7 +97,6 @@ public class GainManaEffect : RelicEffect
 
     public override void Apply()
     {
-        Debug.Log("Effect Applied");
         GameManager.Instance.player.GetComponent<PlayerController>().spellcaster.AddMana(this.amount);
         Debug.Log($"Gained {amount} mana from relic.");
     }
@@ -99,6 +105,28 @@ public class GainManaEffect : RelicEffect
     public override RelicEffect Clone()
     {
         return new GainManaEffect(this.amount);
+    }
+}
+
+public class GainHealthEffect : RelicEffect
+{
+    private int amount;
+
+    public GainHealthEffect(int amount)
+    {
+        this.amount = amount;
+    }
+
+    public override void Apply()
+    {
+        GameManager.Instance.player.GetComponent<PlayerController>().hp.hp += amount;
+        Debug.Log($"Gained {amount} health from relic.");
+    }
+
+
+    public override RelicEffect Clone()
+    {
+        return new GainHealthEffect(this.amount);
     }
 }
 
@@ -162,6 +190,60 @@ public class GainSpellPowerEffect : RelicEffect
     public override RelicEffect Clone()
     {
         return new GainSpellPowerEffect(this.amountString);
+    }
+}
+
+public class GainSpeedEffect : RelicEffect
+{
+    private string amountString;
+    private int amountApplied;
+    private bool applied;
+    private RPN rpn;
+
+    public GainSpeedEffect(string amountString)
+    {
+        this.amountString = amountString;
+        Dictionary<string, int> tempDict = new Dictionary<string, int>
+        {
+            { "wave", GameManager.Instance.wave }
+        };
+        rpn = new RPN(tempDict);
+        applied = false;
+    }
+
+    public override void Apply()
+    {
+
+        Dictionary<string, int> tempDict = new Dictionary<string, int>
+        {
+            { "wave", GameManager.Instance.wave }
+        };
+        rpn.updateRPNVars(tempDict);
+        if (applied == false)
+        {
+            Debug.Log("Speed Applied " + amountString);
+            GameManager.Instance.player.GetComponent<PlayerController>().speed += rpn.RPN_to_int(amountString);
+            amountApplied = rpn.RPN_to_int(amountString);
+            applied = true;
+        }
+
+    }
+
+    public override void Remove()
+    {
+
+        if (applied == true)
+        {
+            Debug.Log("Speed Removed");
+            GameManager.Instance.player.GetComponent<PlayerController>().speed -= amountApplied;
+            applied = false;
+        }
+
+    }
+
+    public override RelicEffect Clone()
+    {
+        return new GainSpeedEffect(this.amountString);
     }
 }
 
@@ -309,6 +391,48 @@ public class StandStillTrigger : RelicTrigger
     }
 }
 
+public class NoRecentCastTrigger : RelicTrigger
+{
+    private float requiredSeconds;
+    private float elapsed = 0f;
+
+    private bool active;
+
+    public NoRecentCastTrigger(float seconds)
+    {
+        requiredSeconds = seconds;
+    }
+
+    public override void Register()
+    {
+        EventBus.Instance.OnSpellCast += OnSpellCast;
+        EventBus.Instance.OnUpdate += OnUpdate;
+    }
+
+    private void OnSpellCast(Spell spell)
+    {
+        active = false;
+        elapsed = 0f;
+
+    }
+
+    private void OnUpdate(float deltaTime)
+    {
+        elapsed += deltaTime;
+        if (elapsed >= requiredSeconds && active == false)
+        {
+            effect.Apply();
+            elapsed = 0f;
+            active = true;
+        }
+    }
+
+    public override RelicTrigger Clone()
+    {
+        return new NoRecentCastTrigger(this.requiredSeconds);
+    }
+}
+
 
 
 
@@ -330,5 +454,45 @@ public class OnMoveTriggerUntil : RelicTrigger //Specifically a "Until" trigger 
         return new OnMoveTriggerUntil();
     }
 }
+
+public class OnStartWaveTrigger : RelicTrigger //Specifically a "Until" trigger so the relic effect can be properly removed or updated
+{
+    public override void Register()
+    {
+        EventBus.Instance.OnStartWave += OnStartWave;
+    }
+
+    private void OnStartWave(int wave)
+    {
+        effect.Apply();
+    }
+
+    public override RelicTrigger Clone()
+    {
+        return new OnStartWaveTrigger();
+    }
+}
+
+public class OnTakeDamageUntil : RelicTrigger //Specifically a "Until" trigger so the relic effect can be properly removed or updated
+{
+    public override void Register()
+    {
+        EventBus.Instance.OnDamage += OnTakeDamage;
+    }
+
+    private void OnTakeDamage(Vector3 vec, Damage dmg, Hittable target)
+    {
+        if (target.team == Hittable.Team.PLAYER)
+        {
+            effect.Remove();
+        }
+    }
+
+    public override RelicTrigger Clone()
+    {
+        return new OnTakeDamageUntil();
+    }
+}
+
 
 

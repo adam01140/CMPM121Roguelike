@@ -16,7 +16,7 @@ public class Hittable
 
     public void Damage(Damage damage, List<Damage> events = null)
     {
-        EventBus.Instance.DoDamage(owner.transform.position, damage, this);
+        if (owner != null) { EventBus.Instance.DoDamage(owner.transform.position, damage, this); }
         hp -= damage.amount;
         if (this.team == Team.PLAYER && GameManager.Instance.state != GameManager.GameState.GAMEOVER)
         {

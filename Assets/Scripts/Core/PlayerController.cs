@@ -16,34 +16,37 @@ public class PlayerController : MonoBehaviour
 
     public int speed;
     int maxHealth;
-    int maxMana;  
-    int regenRate; 
-    int spellPower;  
+    int maxMana;
+    int regenRate;
+    int spellPower;
 
     public Unit unit;
 
     public EnemySpawner enemySpawner;
 
-    public Relic relic;
+    public List<Relic> relics;
 
     public TextAsset classesJson;
     public RPN rpn;
 
+    public string selectedClass;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         unit = GetComponent<Unit>();
         GameManager.Instance.player = gameObject;
         classesJson = Resources.Load<TextAsset>("classes");
+        relics = new List<Relic>();
 
     }
 
     public void StartLevel()
     {
-        updateClass();
 
-        
+
+
         int wave = GameManager.Instance.wave;
+        updateClass();
         spellcaster = new SpellCaster(maxMana, regenRate, Hittable.Team.PLAYER, spellPower);
         StartCoroutine(spellcaster.ManaRegeneration());
 
@@ -60,13 +63,14 @@ public class PlayerController : MonoBehaviour
     public void UpdateStats()
     {
 
-        updateClass();
+
 
 
         int wave = GameManager.Instance.wave;
+        updateClass();
         //spellcaster = new SpellCaster(wave * 10 + 90, wave + 10, Hittable.Team.PLAYER);
         StartCoroutine(spellcaster.ManaRegeneration());
-        spellcaster.updateSpellPower();
+        spellcaster.updateSpellPower(spellPower);
         hp = new Hittable(maxHealth, Hittable.Team.PLAYER, gameObject);
         hp.OnDeath += Die;
         hp.team = Hittable.Team.PLAYER;
@@ -77,12 +81,13 @@ public class PlayerController : MonoBehaviour
         spellui.SetSpell(spellcaster.spell);
     }
 
-    private void updateClass(){
+    private void updateClass()
+    {
         //parse through classes.json
         int wave = GameManager.Instance.wave;
         var root = JObject.Parse(classesJson.text);
-        var mageData = (JObject)root["mage"];
-        var vars = new Dictionary<string,int> {{ "wave", wave }};
+        var mageData = (JObject)root[this.selectedClass];
+        var vars = new Dictionary<string, int> { { "wave", wave } };
         rpn = new RPN(vars);
 
         //update stats
@@ -99,20 +104,21 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log("Hu?");
         EventBus.Instance.DoUpdate(Time.deltaTime);
     }
 
     public void SetPlayerRelic(Relic relic)
     {
-        this.relic = relic;
-        this.relic.Trigger.Initialize(this.relic.Effect);
-        this.relic.Trigger.Register();
-        if (this.relic.Until != null)
+
+        this.relics.Add(relic);
+        relic.Trigger.Initialize(relic.Effect);
+        relic.Trigger.Register();
+        if (relic.Until != null)
         {
-            this.relic.Until.Initialize(this.relic.Effect);
-            this.relic.Until.Register();
+            relic.Until.Initialize(relic.Effect);
+            relic.Until.Register();
         }
+        EventBus.Instance.DoRelicGained(relic);
 
     }
 

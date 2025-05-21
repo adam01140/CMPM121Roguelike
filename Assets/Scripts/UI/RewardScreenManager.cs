@@ -12,10 +12,15 @@ public class RewardScreenManager : MonoBehaviour
     public GameObject changeModButton;
     public GameObject addModButton;
 
+    public GameObject relicButton;
+
     public GameObject relicIcon1;
-    public GameObject relicText1;
+    public TMP_Text relicText1;
     public GameObject relicIcon2;
-    public GameObject relicText2;
+    public TMP_Text relicText2;
+
+    public GameObject relicButton1;
+    public GameObject relicButton2;
 
     private bool relicsSet;
 
@@ -23,7 +28,14 @@ public class RewardScreenManager : MonoBehaviour
     {
         rewardUI.SetActive(false);
         relicsSet = false;
+        relicButton1 = Instantiate(relicButton, rewardUI.transform);
+        relicButton1.transform.localPosition = new Vector3(60, -90);
+        relicButton1.GetComponent<RelicButtonController>().manager = this;
 
+        relicButton2 = Instantiate(relicButton, rewardUI.transform);
+        relicButton2.transform.localPosition = new Vector3(220, -90);
+        relicButton2.GetComponent<RelicButtonController>().manager = this;
+        ClearRelicOptions();
     }
 
     // Update is called once per frame
@@ -45,10 +57,10 @@ public class RewardScreenManager : MonoBehaviour
                 changeSpellButton.SetActive(true);
                 changeModButton.SetActive(true);
                 addModButton.SetActive(true);
-                if (/*GameManager.Instance.wave % 3 == 0*/ !relicsSet)
+                if (GameManager.Instance.wave % 3 == 0 && !relicsSet)
                 {
                     RelicManager relicManager = new RelicManager();
-                    setRelicOptions(relicManager.genRelicSelection());
+                    SetRelicOptions(relicManager.genRelicSelection());
                     relicsSet = true;
                 }
             }
@@ -62,11 +74,37 @@ public class RewardScreenManager : MonoBehaviour
         }
     }
 
-    public void setRelicOptions(List<Relic> relicSelection)
+    public void SetRelicOptions(List<Relic> relicSelection)
     {
-        GameManager.Instance.relicIconManager.PlaceSprite(relicSelection[0].SpriteId, relicIcon1.GetComponent<Image>());
-        GameManager.Instance.player.GetComponent<PlayerController>().SetPlayerRelic(relicSelection[0]);
-        GameManager.Instance.relicIconManager.PlaceSprite(relicSelection[1].SpriteId, relicIcon2.GetComponent<Image>());
+        if (relicSelection.Count > 0)
+        {
+            relicIcon1.SetActive(true);
+            relicText1.gameObject.SetActive(true);
+            relicButton1.SetActive(true);
+            relicButton1.GetComponent<RelicButtonController>().player = GameManager.Instance.player.GetComponent<PlayerController>();
+            relicText1.text = relicSelection[0].description;
+            relicButton1.GetComponent<RelicButtonController>().relic = relicSelection[0];
+            GameManager.Instance.relicIconManager.PlaceSprite(relicSelection[0].SpriteId, relicIcon1.GetComponent<Image>());
+        }
+        if (relicSelection.Count > 1)
+        {
+            relicIcon2.SetActive(true);
+            relicText2.gameObject.SetActive(true);
+            relicButton2.SetActive(true);
+            relicButton2.GetComponent<RelicButtonController>().player = GameManager.Instance.player.GetComponent<PlayerController>();
+            relicText2.text = relicSelection[1].description;
+            relicButton2.GetComponent<RelicButtonController>().relic = relicSelection[1];
+            GameManager.Instance.relicIconManager.PlaceSprite(relicSelection[1].SpriteId, relicIcon2.GetComponent<Image>());
+        }
+    }
+    public void ClearRelicOptions()
+    {
+        relicIcon1.SetActive(false);
+        relicText1.gameObject.SetActive(false);
+        relicButton1.SetActive(false);
+        relicIcon2.SetActive(false);
+        relicText2.gameObject.SetActive(false);
+        relicButton2.SetActive(false);
     }
 
 

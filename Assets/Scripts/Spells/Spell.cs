@@ -428,7 +428,6 @@ public class ArcaneSpray : Spell
         Projectile projectile = this.projectile;
         this.team = team;
         int numProj = this.rpn.RPN_to_int(this.N);
-        Debug.Log(numProj);
         for (int x = 0; x < numProj; x++)
         {
             Vector3 randomOffset = new Vector3(UnityEngine.Random.Range(this.spray * -1.0f, this.spray), 0, 0);
