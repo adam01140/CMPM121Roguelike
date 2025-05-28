@@ -104,7 +104,13 @@
         "damage": { "amount": "30 power 5 / +", "type": "arcane" },
         "mana_cost": "20 power 5 / +",
         "cooldown": "1.5",
-        "jump_range": "5"
+        "jump_range": "5",
+        "projectile": {
+            "trajectory": "straight",
+            "speed": "10",
+            "sprite": 0,
+            "lifetime": "0.1 power 100 / +"
+        }
     },
     "fireball": {
         "name": "Fireball",
@@ -113,7 +119,13 @@
         "damage": { "amount": "30 power 5 / +" },
         "mana_cost": "50",
         "cooldown": "2",
-        "radius": "3"
+        "radius": "3",
+        "projectile": {
+            "trajectory": "straight",
+            "speed": "10",
+            "sprite": 0,
+            "lifetime": "0.1 power 100 / +"
+        }
     },
     "damage_amp": {
         "name": "damage-amplified",

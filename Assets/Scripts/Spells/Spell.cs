@@ -601,8 +601,9 @@ public class ArcaneBounce : Spell
 
 public class ChainingLightningSpell : Spell
 {
-    private int maxJumps = 3;
+    private int jumpsLeft = 3;
     private float jumpRange = 10f;
+    GameObject current;
 
     // public ChainingLightningSpell(SpellCaster owner) : base(owner) { }
 
@@ -620,35 +621,70 @@ public class ChainingLightningSpell : Spell
         Projectile projectile = this.projectile;
         this.team = team;
         GameObject firstTarget = GameManager.Instance.GetClosestEnemy(target);
+        GameObject current = firstTarget;
         if (firstTarget != null)
         {
-            yield return ChainHit(firstTarget, maxJumps);
+            GameManager.Instance.projectileManager.CreateProjectile(0, projectile.trajectory, where, target-where, this.rpn.RPN_to_float(projectile.speed), this.OnHit);
+            //yield return ChainHit(firstTarget, maxJumps);
         }
         yield return new WaitForEndOfFrame();
     }
 
-    private IEnumerator ChainHit(GameObject current, int jumpsLeft)
+    // private IEnumerator ChainHit(GameObject current, int jumpsLeft)
+    // {
+    //     // if (jumpsLeft <= 0) break;
+    //     if (jumpsLeft <= 0) yield break;
+
+    //     var enemyController = current.GetComponent<EnemyController>();
+    //     // if enemyController not null
+    //     //hitablle = enemyController.hp
+    //     // var hittable = enemyController != null ? enemyController.hp : null;
+
+    //     // if (hittable != null && hittable.team != team)
+    //     // {
+    //     //     hittable.Damage(new Damage(GetDamage(), Damage.Type.ARCANE));
+    //     // }
+
+    //     yield return new WaitForSeconds(0.1f);
+
+    //     GameObject nextTarget = null; // can't be "next" lol
+    //     float closestDistance = float.MaxValue;
+    //     foreach (var enemy in GameManager.Instance.GetAllEnemies())
+    //     {
+    //         if (enemy == current) continue;
+    //         float dist = Vector3.Distance(current.transform.position, enemy.transform.position);
+    //         if (dist < closestDistance && dist <= jumpRange)
+    //         {
+    //             closestDistance = dist;
+    //             nextTarget = enemy;
+    //         }
+    //     }
+
+    //     if (nextTarget != null)
+    //     {
+    //         GameManager.Instance.projectileManager.CreateProjectile(0, projectile.trajectory, current.transform.position, nextTarget.transform.position, this.rpn.RPN_to_float(projectile.speed), this.OnHit);
+    //         yield return ChainHit(nextTarget, jumpsLeft - 1);
+    //     }
+    // }
+    override public void OnHit(Hittable other, Vector3 impact)
     {
-        // if (jumpsLeft <= 0) break;
-        if (jumpsLeft <= 0) yield break;
-
-        var enemyController = current.GetComponent<EnemyController>();
-        // if enemyController not null
-        //hitablle = enemyController.hp
-        var hittable = enemyController != null ? enemyController.hp : null;
-
-        if (hittable != null && hittable.team != team)
-        {
-            hittable.Damage(new Damage(GetDamage(), Damage.Type.ARCANE));
+        
+        if (jumpsLeft <= 0) {
+            return;
         }
+        Debug.Log(jumpsLeft + " JumpsLeft");
+        //var enemyController = current.GetComponent<EnemyController>();
 
-        yield return new WaitForSeconds(0.1f);
+        //yield return new WaitForSeconds(0.1f);
 
         GameObject nextTarget = null; // can't be "next" lol
         float closestDistance = float.MaxValue;
         foreach (var enemy in GameManager.Instance.GetAllEnemies())
         {
             if (enemy == current) continue;
+            // Debug.Log("current.transform: " + current.transform.position);
+            // Debug.Log("enemy.transform: " + enemy.transform.position);
+
             float dist = Vector3.Distance(current.transform.position, enemy.transform.position);
             if (dist < closestDistance && dist <= jumpRange)
             {
@@ -659,8 +695,13 @@ public class ChainingLightningSpell : Spell
 
         if (nextTarget != null)
         {
-            yield return ChainHit(nextTarget, jumpsLeft - 1);
+            GameManager.Instance.projectileManager.CreateProjectile(0, projectile.trajectory, current.transform.position, nextTarget.transform.position, this.rpn.RPN_to_float(projectile.speed), this.OnHit);
+            jumpsLeft--;
+            current = nextTarget;
+            
+            //yield return ChainHit(nextTarget, jumpsLeft - 1);
         }
+        
     }
 
     ChainingLightningSpell() : base()
@@ -672,6 +713,7 @@ public class ChainingLightningSpell : Spell
 public class FireballSpell : Spell
 {
     private float radius = 5f;
+    private Vector3 location;
 
     // public FireballSpell(SpellCaster owner) : base(owner) { }
 
@@ -687,12 +729,22 @@ public class FireballSpell : Spell
     {
         Projectile projectile = this.projectile;
         this.team = team;
+        location = where;
         //float radius = 5f;
         GameManager.Instance.projectileManager.CreateProjectile(0, projectile.trajectory, where, target - where, this.rpn.RPN_to_float(projectile.speed), this.OnHit);
+        
+        
+
+        yield return new WaitForEndOfFrame();
+    }
+
+    override public void OnHit(Hittable other, Vector3 impact)
+    {
         var enemies = new List<GameObject>(GameManager.Instance.GetAllEnemies());
         foreach (var enemy in enemies)
-        {
-            float dist = Vector3.Distance(where, enemy.transform.position);
+        {   
+            
+            float dist = Vector3.Distance(location, enemy.transform.position);
             if (dist <= radius)
             {
                 var enemyController = enemy.GetComponent<EnemyController>();
@@ -704,10 +756,7 @@ public class FireballSpell : Spell
                 }
             }
         }
-
-        yield return new WaitForEndOfFrame();
     }
-
     FireballSpell() : base()
     {
 
