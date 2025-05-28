@@ -20,6 +20,8 @@ public class Spells
     public Homing homing;
     public Machine machine;
     public Bleed bleed;
+    public Slow slow;
+    public Knockback knockback;
 
 
 

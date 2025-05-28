@@ -28,11 +28,16 @@ public class Spell
     public Hittable.Team team;
     public RPN rpn;
 
-    public List<Damage> onHitEvents;
+    public List<Damage> damageOverTimeEvents;
+
+    public List<Tuple<int, float>> slowEvents;
+    public float knockback;
 
     public Spell()
     {
-        this.onHitEvents = new List<Damage>();
+        this.damageOverTimeEvents = new List<Damage>();
+        this.slowEvents = new List<Tuple<int, float>>();
+        this.knockback = 0.0f;
 
     }
     public Spell(Spell other)
@@ -48,7 +53,9 @@ public class Spell
         this.projectile = other.projectile;
         this.secondary_projectile = other.secondary_projectile;
         this.team = other.team;
-        this.onHitEvents = new List<Damage>();
+        this.damageOverTimeEvents = new List<Damage>();
+        this.slowEvents = new List<Tuple<int, float>>();
+        this.knockback = other.knockback;
     }
 
     public void AssignOwner(SpellCaster owner)
@@ -162,11 +169,30 @@ public class Spell
     {
         if (other.team != team)
         {
+            if (this.slowEvents.Count > 0)
+            {
+                var enemyController = other.owner.GetComponent<EnemyController>();
+                if (enemyController != null)
+                {
+                    foreach (var slow in this.slowEvents)
+                    {
+                        enemyController.StartCoroutine(ApplySlow(enemyController, slow.Item1, slow.Item2));
+                    }
+                }
+            }
+
+            Debug.Log("Seen KB: " + this.knockback);
+            var rb = other.owner.GetComponent<EnemyController>();
+            if (rb != null)
+            {
+                rb.StartCoroutine(DoKnockback(rb, (int)this.knockback));
+            }
+
             if (this.damageFull != null)
             {
-                if (this.onHitEvents.Count > 0)
+                if (this.damageOverTimeEvents.Count > 0)
                 {
-                    other.Damage(damageFull, this.onHitEvents);
+                    other.Damage(damageFull, this.damageOverTimeEvents);
                 }
                 else
                 {
@@ -176,9 +202,9 @@ public class Spell
             else
             {
                 this.damageFull = new Damage(this.rpn.RPN_to_int(this.damage.amount), this.damage.type);
-                if (this.onHitEvents.Count > 0)
+                if (this.damageOverTimeEvents.Count > 0)
                 {
-                    other.Damage(damageFull, this.onHitEvents);
+                    other.Damage(damageFull, this.damageOverTimeEvents);
                 }
                 else
                 {
@@ -189,6 +215,31 @@ public class Spell
 
         }
 
+    }
+    public IEnumerator ApplySlow(EnemyController enemy, int slowAmount, float slowDuration)
+    {
+        var unit = enemy.GetComponent<Unit>();
+        if (unit != null)
+        {
+            if (enemy.speed - slowAmount > 0)
+            {
+                enemy.speed -= slowAmount;
+                yield return new WaitForSeconds(slowDuration);
+                enemy.speed += slowAmount;
+            }
+        }
+    }
+    public IEnumerator DoKnockback(EnemyController enemy, int knockback)
+    {
+        var unit = enemy.GetComponent<Unit>();
+        if (unit != null && knockback > 0)
+        {
+            int speedBase = enemy.speed;
+            enemy.speed = (knockback * -1);
+            yield return new WaitForSeconds(0.5f);
+            enemy.speed = speedBase;
+
+        }
     }
 
 }
@@ -220,7 +271,9 @@ public class ModifierSpell : Spell
         this.casts = 0;
         this.delay = 0.0f;
         this.splitSpread = 0.0f;
-        this.onHitEvents = inner.onHitEvents;
+        this.damageOverTimeEvents = inner.damageOverTimeEvents;
+        this.slowEvents = inner.slowEvents;
+        this.knockback = inner.knockback;
 
     }
 
@@ -242,7 +295,7 @@ public class ModifierSpell : Spell
         this.splitSpread += newSpread;
     }
 
-    public void AddOnHitEffect(DamageTemp damageEvent, int instancesToQue = 5)
+    public void AddDamageOverTimeEffect(DamageTemp damageEvent, int instancesToQue = 5)
     {
         Dictionary<string, int> tempDict = new Dictionary<string, int>();
         tempDict["damage"] = this.GetDamage();
@@ -250,10 +303,24 @@ public class ModifierSpell : Spell
         Damage damageEventTemp = new Damage((int)Math.Floor(this.rpn.RPN_to_float(damageEvent.amount)), damageEvent.type, Damage.EventType.DOT);
         for (int i = 0; i <= instancesToQue; i++)
         {
-            this.onHitEvents.Add(damageEventTemp);
+            this.damageOverTimeEvents.Add(damageEventTemp);
         }
 
     }
+
+    public void AddSlowEffect(int slowAmmount, float slowDuration)
+    {
+        this.slowEvents.Add(new Tuple<int, float>(slowAmmount, slowDuration));
+
+    }
+
+    public void AddKnockback(float distance)
+    {
+
+        innerSpell.knockback += distance;
+
+    }
+
 
     public override int GetDamage()
     {
@@ -372,6 +439,24 @@ public class ArcaneBlast : Spell
     {
         if (other.team != team)
         {
+            if (this.slowEvents.Count > 0)
+            {
+                var enemyController = other.owner.GetComponent<EnemyController>();
+                if (enemyController != null)
+                {
+                    foreach (var slow in this.slowEvents)
+                    {
+                        enemyController.StartCoroutine(ApplySlow(enemyController, slow.Item1, slow.Item2));
+                    }
+                }
+            }
+
+            Debug.Log("Seen KB: " + this.knockback);
+            var rb = other.owner.GetComponent<EnemyController>();
+            if (rb != null)
+            {
+                rb.StartCoroutine(DoKnockback(rb, (int)this.knockback));
+            }
             if (this.damageFull != null)
             {
                 other.Damage(damageFull);
@@ -413,6 +498,7 @@ public class ArcaneBlast : Spell
                 damageFull = new Damage(this.rpn.RPN_to_int(damage.amount), damage.type);
                 other.Damage(damageFull);
             }
+
         }
     }
 
@@ -458,6 +544,21 @@ public class ArcaneBounce : Spell
     {
         if (other.team != team)
         {
+            Debug.Log("Seen KB: " + this.knockback);
+            var rb = other.owner.GetComponent<EnemyController>();
+            if (rb != null)
+            {
+                rb.StartCoroutine(DoKnockback(rb, (int)this.knockback));
+            }
+            if (this.damageFull != null)
+            {
+                other.Damage(damageFull);
+            }
+            else
+            {
+                damageFull = new Damage(this.rpn.RPN_to_int(damage.amount), damage.type);
+                other.Damage(damageFull);
+            }
             if (this.damageFull != null)
             {
                 other.Damage(damageFull);

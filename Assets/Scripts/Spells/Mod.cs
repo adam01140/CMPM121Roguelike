@@ -20,6 +20,9 @@ public abstract class Mod
     public string projectile_trajectory;
     public string second_projectile_trajectory;
     public string bleed_damage;
+    public int slow_amount;
+    public float slow_duration;
+    public float knockback_amount;
     public RPN localRPN;
 
 
@@ -167,12 +170,49 @@ public class Bleed : Mod
         ValueAdder cooldown_mult = new ValueAdder(this.localRPN.RPN_to_int(cooldown_multiplier));
         spell.AddCooldownModifier(cooldown_mult);
 
-        spell.AddOnHitEffect(new DamageTemp(bleed_damage, Damage.Type.PHYSICAL));
+        spell.AddDamageOverTimeEffect(new DamageTemp(bleed_damage, Damage.Type.PHYSICAL));
 
     }
 
 
 }
+
+public class Slow : Mod
+{
+    public Slow()
+    {
+        Dictionary<string, int> tempDict = new Dictionary<string, int>();
+        tempDict["wave"] = GameManager.Instance.wave;
+        this.localRPN = new RPN(tempDict);
+    }
+    public override void ApplySelf(ModifierSpell spell)
+    {
+        spell.AddSlowEffect(slow_amount, slow_duration);
+
+
+    }
+
+
+}
+
+public class Knockback : Mod
+{
+    public Knockback()
+    {
+        Dictionary<string, int> tempDict = new Dictionary<string, int>();
+        tempDict["wave"] = GameManager.Instance.wave;
+        this.localRPN = new RPN(tempDict);
+    }
+    public override void ApplySelf(ModifierSpell spell)
+    {
+        spell.AddKnockback(knockback_amount);
+
+
+    }
+
+
+}
+
 
 
 

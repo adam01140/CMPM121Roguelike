@@ -150,5 +150,16 @@
         "damage_multiplier": "1.5",
         "cooldown_multiplier": "1.5",
         "bleed_damage": "0.2 damage *"
+    },
+    "slow": {
+        "name": "slow",
+        "description": "Applies a short slow on hit",
+        "slow_amount": "2",
+        "slow_duration": "0.5"
+    },
+    "knockback": {
+        "name": "knockback",
+        "description": "Applies a knockback on hit",
+        "knockback_amount": "5.0"
     }
 }

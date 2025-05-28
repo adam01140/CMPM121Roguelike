@@ -66,6 +66,8 @@ public class SpellBuilder
         allSpellsMods.Add(this.spell_bases.homing);
         allSpellsMods.Add(this.spell_bases.bleed);
         allSpellsMods.Add(this.spell_bases.machine);
+        allSpellsMods.Add(this.spell_bases.slow);
+        allSpellsMods.Add(this.spell_bases.knockback);
 
     }
 
