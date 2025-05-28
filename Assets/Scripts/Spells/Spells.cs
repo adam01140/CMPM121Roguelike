@@ -12,7 +12,7 @@ public class Spells
     public ArcaneBlast arcane_blast;
     public ArcaneSpray arcane_spray;
     public ArcaneBounce arcane_bounce;
-    public FireballSpell fireball_spell;
+    public FireballSpell fireball;
     public DamageAmp damage_amp;
     public SpeedAmp speed_amp;
     public Doubler doubler;

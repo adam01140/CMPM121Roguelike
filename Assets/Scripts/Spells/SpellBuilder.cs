@@ -57,7 +57,7 @@ public class SpellBuilder
         // allSpellsBases.Add(this.spell_bases.arcane_blast);
         // allSpellsBases.Add(this.spell_bases.arcane_spray);
         //allSpellsBases.Add(this.spell_bases.arcane_bounce);
-        allSpellsBases.Add(this.spell_bases.fireball_spell);
+        allSpellsBases.Add(this.spell_bases.fireball);
         allSpellsMods = new List<Mod>();
         allSpellsMods.Add(this.spell_bases.damage_amp);
         allSpellsMods.Add(this.spell_bases.speed_amp);
