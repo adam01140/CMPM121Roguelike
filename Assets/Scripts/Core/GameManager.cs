@@ -66,6 +66,12 @@ public class GameManager
         timeSpent = 0;
         enemies = new List<GameObject>();
     }
+
+    public IEnumerable<GameObject> GetAllEnemies()
+    {
+        return enemies;
+    }
+    
     public void resetGame()
     {
         wave = 1;

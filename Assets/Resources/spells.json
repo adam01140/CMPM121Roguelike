@@ -96,6 +96,25 @@
             "sprite": 0
         }
     },
+    "chaining_lightning": {
+        "name": "Chaining Lightning",
+        "description": "A bolt that chains between multiple enemies.",
+        "icon": 4,
+        "N": "3",
+        "damage": { "amount": "30 power 5 / +", "type": "arcane" },
+        "mana_cost": "20 power 5 / +",
+        "cooldown": "1.5",
+        "jump_range": "5"
+    },
+    "fireball": {
+        "name": "Fireball",
+        "description": "A massive explosion that damages all enemies nearby.",
+        "icon": 5,
+        "damage": { "amount": "30 power 5 / +" },
+        "mana_cost": "50",
+        "cooldown": "2",
+        "radius": "3"
+    },
     "damage_amp": {
         "name": "damage-amplified",
         "description": "Increased damage and increased mana cost.",

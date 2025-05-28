@@ -599,6 +599,121 @@ public class ArcaneBounce : Spell
     }
 }
 
+public class ChainingLightningSpell : Spell
+{
+    private int maxJumps = 3;
+    private float jumpRange = 10f;
+
+    // public ChainingLightningSpell(SpellCaster owner) : base(owner) { }
+
+    // public override string GetName() => "Chain Lightning";
+
+    // public override void SetAttributes(JObject attributes)
+    // {
+    //     base.SetAttributes(attributes);
+    //     maxJumps = RPN.ParseInt(attributes["N"]?.ToString(), owner.spellPower);
+    //     jumpRange = RPN.ParseFloat(attributes["jump_range"]?.ToString(), owner.spellPower);
+    // }
+
+    public override IEnumerator Cast(Vector3 where, Vector3 target, Hittable.Team team, int cast = 0, float delay = 0.0f, float splitSpread = 0.0f)
+    {
+        Projectile projectile = this.projectile;
+        this.team = team;
+        GameObject firstTarget = GameManager.Instance.GetClosestEnemy(target);
+        if (firstTarget != null)
+        {
+            yield return ChainHit(firstTarget, maxJumps);
+        }
+        yield return new WaitForEndOfFrame();
+    }
+
+    private IEnumerator ChainHit(GameObject current, int jumpsLeft)
+    {
+        // if (jumpsLeft <= 0) break;
+        if (jumpsLeft <= 0) yield break;
+
+        var enemyController = current.GetComponent<EnemyController>();
+        // if enemyController not null
+        //hitablle = enemyController.hp
+        var hittable = enemyController != null ? enemyController.hp : null;
+
+        if (hittable != null && hittable.team != team)
+        {
+            hittable.Damage(new Damage(GetDamage(), Damage.Type.ARCANE));
+        }
+
+        yield return new WaitForSeconds(0.1f);
+
+        GameObject nextTarget = null; // can't be "next" lol
+        float closestDistance = float.MaxValue;
+        foreach (var enemy in GameManager.Instance.GetAllEnemies())
+        {
+            if (enemy == current) continue;
+            float dist = Vector3.Distance(current.transform.position, enemy.transform.position);
+            if (dist < closestDistance && dist <= jumpRange)
+            {
+                closestDistance = dist;
+                nextTarget = enemy;
+            }
+        }
+
+        if (nextTarget != null)
+        {
+            yield return ChainHit(nextTarget, jumpsLeft - 1);
+        }
+    }
+
+    ChainingLightningSpell() : base()
+    {
+
+    }
+}
+
+public class FireballSpell : Spell
+{
+    private float radius = 5f;
+
+    // public FireballSpell(SpellCaster owner) : base(owner) { }
+
+    // public override string GetName() => "Fireball";
+
+    // public override void SetAttributes(JObject attributes)
+    // {
+    //     base.SetAttributes(attributes);
+    //     radius = RPN.ParseFloat(attributes["radius"]?.ToString(), owner.spellPower);
+    // }
+
+    public override IEnumerator Cast(Vector3 where, Vector3 target, Hittable.Team team, int cast = 0, float delay = 0.0f, float splitSpread = 0.0f)
+    {
+        Projectile projectile = this.projectile;
+        this.team = team;
+        //float radius = 5f;
+        GameManager.Instance.projectileManager.CreateProjectile(0, projectile.trajectory, where, target - where, this.rpn.RPN_to_float(projectile.speed), this.OnHit);
+        var enemies = new List<GameObject>(GameManager.Instance.GetAllEnemies());
+        foreach (var enemy in enemies)
+        {
+            float dist = Vector3.Distance(where, enemy.transform.position);
+            if (dist <= radius)
+            {
+                var enemyController = enemy.GetComponent<EnemyController>();
+                var hittable = enemyController != null ? enemyController.hp : null;
+
+                if (hittable != null && hittable.team != team)
+                {
+                    hittable.Damage(new Damage(GetDamage(), Damage.Type.FIRE));
+                }
+            }
+        }
+
+        yield return new WaitForEndOfFrame();
+    }
+
+    FireballSpell() : base()
+    {
+
+    }
+}
+
 
 public abstract class ValueModifier
 {

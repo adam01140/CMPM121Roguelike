@@ -52,11 +52,12 @@ public class SpellBuilder
         spell_bases = jo.ToObject<Spells>();
 
         allSpellsBases = new List<Spell>();
-        allSpellsBases.Add(this.spell_bases.arcane_bolt);
-        allSpellsBases.Add(this.spell_bases.magic_missile);
-        allSpellsBases.Add(this.spell_bases.arcane_blast);
-        allSpellsBases.Add(this.spell_bases.arcane_spray);
-        allSpellsBases.Add(this.spell_bases.arcane_bounce);
+        // allSpellsBases.Add(this.spell_bases.arcane_bolt);
+        // allSpellsBases.Add(this.spell_bases.magic_missile);
+        // allSpellsBases.Add(this.spell_bases.arcane_blast);
+        // allSpellsBases.Add(this.spell_bases.arcane_spray);
+        //allSpellsBases.Add(this.spell_bases.arcane_bounce);
+        allSpellsBases.Add(this.spell_bases.fireball_spell);
         allSpellsMods = new List<Mod>();
         allSpellsMods.Add(this.spell_bases.damage_amp);
         allSpellsMods.Add(this.spell_bases.speed_amp);
