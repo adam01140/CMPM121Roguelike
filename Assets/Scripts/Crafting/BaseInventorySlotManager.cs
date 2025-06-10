@@ -1,9 +1,8 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
-using System;
 
-public class BaseCraftingSlotManager : MonoBehaviour
+public class BaseInventorySlotManager : MonoBehaviour
 {
     public Spell spellBase;
     public CraftingUIManager manager;
@@ -26,15 +25,11 @@ public class BaseCraftingSlotManager : MonoBehaviour
         {
             GameManager.Instance.relicIconManager.PlaceSprite(this.spellBase.icon, this.icon);
         }
-
     }
 
     public void OnMouseDown()
     {
-        if (this.manager.selectedBase != null)
-        {
-            this.Set(this.manager.selectedBase);
-        }
+        this.manager.SetSelectedBase(this.spellBase);
 
     }
 

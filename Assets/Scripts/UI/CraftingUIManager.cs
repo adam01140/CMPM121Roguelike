@@ -17,93 +17,115 @@ public class CraftingUIManager : MonoBehaviour
     public GameObject slot1;
     public GameObject slot2;
     public GameObject slot3;
+    //
+    public GameObject baseInvSlot;
+    public GameObject modInvSlot;
 
-    
+    public Spell selectedBase;
+    public Mod selectedMod;
 
     public GameObject energyIcon;
     public TMP_Text energyMax;
+    public SpellCaster caster;
 
-    
+    public SpellBuilder builder;
+
+
 
     void Start()
     {
-        craftingUI.SetActive(false);
-        relicsSet = false;
-        baseSpellSlot = Instantiate(baseSlot, craftingUI.transform);
-        baseSpellSlot.transform.localPosition = new Vector3(60, -90);
-        baseSpellSlot.GetComponent<BaseCraftingSlotManager>().manager = this;
+        //this.craftingUI.SetActive(true);
+        this.builder = new SpellBuilder();
+
+        this.baseSpellSlot.GetComponent<BaseCraftingSlotManager>().manager = this;
+
+        this.slot1.GetComponent<ModiferCraftingSlotManager>().manager = this;
+
+        this.slot2.GetComponent<ModiferCraftingSlotManager>().manager = this;
+
+        this.slot3.GetComponent<ModiferCraftingSlotManager>().manager = this;
+
+        this.baseInvSlot.GetComponent<BaseInventorySlotManager>().manager = this;
 
 
-        slot1 = Instantiate(modSlot, craftingUI.transform);
-        slot1.transform.localPosition = new Vector3(70, -90);
-        slot1.GetComponent<ModiferCraftingSlotManager>().manager = this;
 
-        slot2 = Instantiate(modSlot, craftingUI.transform);
-        slot2.transform.localPosition = new Vector3(80, -90);
-        slot2.GetComponent<ModiferCraftingSlotManager>().manager = this;
-
-        slot3 = Instantiate(modSlot, craftingUI.transform);
-        slot3.transform.localPosition = new Vector3(90, -90);
-        slot3.GetComponent<ModiferCraftingSlotManager>().manager = this;
-
+        this.modInvSlot.GetComponent<ModifierInventorySlotManager>().manager = this;
 
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (GameManager.Instance.state == GameManager.GameState.WAVEEND || GameManager.Instance.state == GameManager.GameState.GAMEOVER)
+        if (GameManager.Instance.state == GameManager.GameState.INWAVE)
         {
-            rewardUI.SetActive(true);
-            if (GameManager.Instance.state == GameManager.GameState.GAMEOVER)
-            {
-                buttonText.text = "Try Again?";
-                changeSpellButton.SetActive(false);
-                changeModButton.SetActive(false);
-                addModButton.SetActive(false);
+            this.craftingUI.SetActive(false);
 
-            }
-            else if (GameManager.Instance.state == GameManager.GameState.WAVEEND)
-            {
-                changeSpellButton.SetActive(true);
-                changeModButton.SetActive(true);
-                addModButton.SetActive(true);
-                if (GameManager.Instance.wave % 3 == 0 && !relicsSet)
-                {
-                    RelicManager relicManager = new RelicManager();
-                    SetRelicOptions(relicManager.genRelicSelection());
-                    relicsSet = true;
-                }
-            }
 
         }
         else
         {
-            rewardUI.SetActive(false);
-            relicsSet = false;
+            this.craftingUI.SetActive(true);
 
         }
     }
 
+    public void SetSelectedBase(Spell spellBase)
+    {
+        if (spellBase == null)
+        {
+            Debug.Log("Invalid Base");
+            return;
+        }
+        if (this.selectedMod != null)
+        {
+            this.selectedMod = null;
+        }
+        this.selectedBase = spellBase;
+    }
+    public void SetSelectedMod(Mod mod)
+    {
+        if (mod == null)
+        {
+            Debug.Log("Invalid Base");
+            return;
+        }
+        if (this.selectedBase != null)
+        {
+            this.selectedBase = null;
+        }
+        this.selectedMod = mod;
+    }
+
+    public void SetCaster(SpellCaster spellCaster)
+    {
+        this.caster = spellCaster;
+        this.builder = new SpellBuilder();
+
+        this.baseInvSlot.GetComponent<BaseInventorySlotManager>().Set(this.builder.GetRandomBase(spellCaster));
+    }
 
 
-    public void SetCraftedSpell(){
-        ModifierSpell spell = new ModifierSpell(this.baseSpellSlot.GetComponent<BaseCraftingSlotManager>.spellBase);
+    public void SetCraftedSpell()
+    {
+        ModifierSpell spell = new ModifierSpell(this.baseSpellSlot.GetComponent<BaseCraftingSlotManager>().spellBase);
         Mod temp;
 
-        if (this.slot1.GetComponent<ModiferCraftingSlotManager>.modifier != null){
-            temp = this.slot1.GetComponent<ModiferCraftingSlotManager>.modifier;
-            temp.ApplySelf(spell)
+        if (this.slot1.GetComponent<ModiferCraftingSlotManager>().modifier != null)
+        {
+            temp = this.slot1.GetComponent<ModiferCraftingSlotManager>().modifier;
+            temp.ApplySelf(spell);
         }
-        if (this.slot2.GetComponent<ModiferCraftingSlotManager>.modifier != null){
-            temp = this.slot2.GetComponent<ModiferCraftingSlotManager>.modifier;
-            temp.ApplySelf(spell)
+        if (this.slot2.GetComponent<ModiferCraftingSlotManager>().modifier != null)
+        {
+            temp = this.slot2.GetComponent<ModiferCraftingSlotManager>().modifier;
+            temp.ApplySelf(spell);
         }
-        if (this.slot3.GetComponent<ModiferCraftingSlotManager>.modifier != null){
-            temp = this.slot3.GetComponent<ModiferCraftingSlotManager>.modifier;
-            temp.ApplySelf(spell)
+        if (this.slot3.GetComponent<ModiferCraftingSlotManager>().modifier != null)
+        {
+            temp = this.slot3.GetComponent<ModiferCraftingSlotManager>().modifier;
+            temp.ApplySelf(spell);
         }
-        
+
     }
 
 

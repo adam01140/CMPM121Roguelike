@@ -28,6 +28,7 @@ public class PlayerController : MonoBehaviour
 
     public TextAsset classesJson;
     public RPN rpn;
+    public CraftingUIManager crafter;
 
     public string selectedClass;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -38,6 +39,10 @@ public class PlayerController : MonoBehaviour
         classesJson = Resources.Load<TextAsset>("classes");
         relics = new List<Relic>();
 
+
+        //TEMP
+        spellcaster = new SpellCaster(maxMana, regenRate, Hittable.Team.PLAYER, spellPower);
+        this.crafter.SetCaster(this.spellcaster);
     }
 
     public void StartLevel()
@@ -58,6 +63,7 @@ public class PlayerController : MonoBehaviour
         healthui.SetHealth(hp);
         manaui.SetSpellCaster(spellcaster);
         spellui.SetSpell(spellcaster.spell);
+        this.crafter.SetCaster(this.spellcaster);
     }
 
     public void UpdateStats()

@@ -2,9 +2,9 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
-public class ModiferCraftingSlotManager : MonoBehaviour
+public class ModifierInventorySlotManager : MonoBehaviour
 {
-    public Mod modifier;
+    public Mod mod;
     public CraftingUIManager manager;
     public Image icon;
 
@@ -20,29 +20,26 @@ public class ModiferCraftingSlotManager : MonoBehaviour
 
     }
 
-
     public void OnMouseDown()
     {
-
+        this.manager.SetSelectedMod(this.mod);
 
     }
 
 
-
-    public void Set(Mod modifier)
+    public void Set(Mod mod)
     {
-        if (this.modifier == null)
+        if (this.mod == null)
         {
-            this.modifier = modifier;
+            this.mod = mod;
         }
     }
 
     public void Release()
     {
-        if (this.modifier != null)
+        if (this.mod != null)
         {
-            this.modifier = null;
+            this.mod = null;
         }
     }
-
 }
