@@ -78,6 +78,12 @@ public class SpellCaster
         }
     }
 
+    public void SetSpell(ModifierSpell spell)
+    {
+        this.spell = spell;
+        this.spell.AssignOwner(this);
+    }
+
     public IEnumerator Cast(Vector3 where, Vector3 target)
     {
         if (mana >= spell.GetManaCost() && spell.IsReady())

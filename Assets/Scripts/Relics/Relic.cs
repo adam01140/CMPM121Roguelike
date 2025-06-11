@@ -8,6 +8,7 @@ public class Relic
     public string Name { get; private set; }
     public int SpriteId { get; private set; }
     public string description;
+    public int energy = 1;
     public RelicTrigger Trigger { get; private set; }
     public RelicEffect Effect { get; private set; }
 
