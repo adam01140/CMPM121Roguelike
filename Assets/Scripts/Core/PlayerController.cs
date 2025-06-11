@@ -28,7 +28,6 @@ public class PlayerController : MonoBehaviour
 
     public TextAsset classesJson;
     public RPN rpn;
-    public CraftingUIManager crafter;
 
     public string selectedClass;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -38,8 +37,6 @@ public class PlayerController : MonoBehaviour
         GameManager.Instance.player = gameObject;
         classesJson = Resources.Load<TextAsset>("classes");
         relics = new List<Relic>();
-
-
 
     }
 
@@ -61,7 +58,6 @@ public class PlayerController : MonoBehaviour
         healthui.SetHealth(hp);
         manaui.SetSpellCaster(spellcaster);
         spellui.SetSpell(spellcaster.spell);
-        this.crafter.SetCaster(this.spellcaster);
     }
 
     public void UpdateStats()
@@ -78,8 +74,7 @@ public class PlayerController : MonoBehaviour
         hp = new Hittable(maxHealth, Hittable.Team.PLAYER, gameObject);
         hp.OnDeath += Die;
         hp.team = Hittable.Team.PLAYER;
-        spellcaster.SetSpell(crafter.GetCraftedSpell());
-        crafter.SetRelics();
+
         // tell UI elements what to show
         healthui.SetHealth(hp);
         manaui.SetSpellCaster(spellcaster);
@@ -101,6 +96,9 @@ public class PlayerController : MonoBehaviour
         regenRate = rpn.RPN_to_int(mageData["mana_regeneration"].ToString());
         spellPower = rpn.RPN_to_int(mageData["spellpower"].ToString());
         speed = rpn.RPN_to_int(mageData["speed"].ToString());
+
+        Debug.Log("maxHealth " + maxHealth);
+        Debug.Log("maxMana " + maxMana);
     }
 
     // Update is called once per frame
@@ -122,11 +120,6 @@ public class PlayerController : MonoBehaviour
         }
         EventBus.Instance.DoRelicGained(relic);
 
-    }
-
-    public void ClearRelics()
-    {
-        relics.Clear();
     }
 
     void OnAttack(InputValue value)

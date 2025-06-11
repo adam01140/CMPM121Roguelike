@@ -29,12 +29,6 @@ public class RelicManager
         }
         return relicSelection;
     }
-    public Relic GenRelic()
-    {
-        List<Relic> allRelics = RelicBuilder.Instance.allRelics;
-        List<int> indicies = RelicBuilder.Instance.GenRelicIndices();
-        return allRelics[indicies[0]];
-    }
 
 }
 

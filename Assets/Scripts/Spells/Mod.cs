@@ -10,7 +10,6 @@ public abstract class Mod
 {
     public string name;
     public string description;
-    public int energy;
     public string damage_multiplier;
     public string speed_multiplier;
     public string mana_multiplier;
@@ -25,7 +24,6 @@ public abstract class Mod
     public float slow_duration;
     public float knockback_amount;
     public RPN localRPN;
-    public int icon = 1;
 
 
     public abstract void ApplySelf(ModifierSpell spell);
