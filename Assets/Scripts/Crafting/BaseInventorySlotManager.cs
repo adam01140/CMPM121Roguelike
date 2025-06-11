@@ -51,4 +51,10 @@ public class BaseInventorySlotManager : MonoBehaviour
             this.spellBase = null;
         }
     }
+    public void OnMouseOver(){
+        //Set textbox to active
+    }
+    public void OnMouseExit(){
+        //Set textbox to inactive
+    }
 }

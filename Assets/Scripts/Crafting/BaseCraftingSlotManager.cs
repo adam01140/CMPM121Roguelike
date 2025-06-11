@@ -16,6 +16,7 @@ public class BaseCraftingSlotManager : MonoBehaviour
     {
         this.spellBase = null;
         this.hasSpell = false;
+        //Instantiate a text box with spell desc 
     }
 
     // Update is called once per frame
@@ -55,5 +56,11 @@ public class BaseCraftingSlotManager : MonoBehaviour
             this.hasSpell = false;
             this.spellBase = null;
         }
+    }
+    public void OnMouseOver(){
+        //Set textbox to active
+    }
+    public void OnMouseExit(){
+        //Set textbox to inactive
     }
 }

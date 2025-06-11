@@ -12,6 +12,7 @@ public class Spell
 
     public string name;
     public string description;
+    public int energy;
     public int icon;
     public string N;
     public float spray;

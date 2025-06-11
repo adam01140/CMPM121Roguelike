@@ -10,6 +10,7 @@ public abstract class Mod
 {
     public string name;
     public string description;
+    public int energy;
     public string damage_multiplier;
     public string speed_multiplier;
     public string mana_multiplier;

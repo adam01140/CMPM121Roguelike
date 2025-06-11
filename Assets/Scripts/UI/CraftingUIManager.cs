@@ -7,9 +7,8 @@ public class CraftingUIManager : MonoBehaviour
 {
     public GameObject craftingUI;
 
+    public InventoryManager inventory
 
-    public List<GameObject> spellBases;
-    public List<GameObject> spellMod;
     public List<TMP_Text> descriptions;
 
     public GameObject baseSpellSlot;
@@ -37,6 +36,8 @@ public class CraftingUIManager : MonoBehaviour
         //this.craftingUI.SetActive(true);
         this.builder = new SpellBuilder();
 
+        this.inventory = new InventoryManager();
+
         this.baseSpellSlot.GetComponent<BaseCraftingSlotManager>().manager = this;
 
         this.slot1.GetComponent<ModiferCraftingSlotManager>().manager = this;
@@ -53,7 +54,6 @@ public class CraftingUIManager : MonoBehaviour
 
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (GameManager.Instance.state == GameManager.GameState.INWAVE)
@@ -138,42 +138,6 @@ public class CraftingUIManager : MonoBehaviour
 
 
 
-
-
-
-
-    // public void SetRelicOptions(List<Relic> relicSelection)
-    // {
-    //     if (relicSelection.Count > 0)
-    //     {
-    //         relicIcon1.SetActive(true);
-    //         relicText1.gameObject.SetActive(true);
-    //         relicButton1.SetActive(true);
-    //         relicButton1.GetComponent<RelicButtonController>().player = GameManager.Instance.player.GetComponent<PlayerController>();
-    //         relicText1.text = relicSelection[0].description;
-    //         relicButton1.GetComponent<RelicButtonController>().relic = relicSelection[0];
-    //         GameManager.Instance.relicIconManager.PlaceSprite(relicSelection[0].SpriteId, relicIcon1.GetComponent<Image>());
-    //     }
-    //     if (relicSelection.Count > 1)
-    //     {
-    //         relicIcon2.SetActive(true);
-    //         relicText2.gameObject.SetActive(true);
-    //         relicButton2.SetActive(true);
-    //         relicButton2.GetComponent<RelicButtonController>().player = GameManager.Instance.player.GetComponent<PlayerController>();
-    //         relicText2.text = relicSelection[1].description;
-    //         relicButton2.GetComponent<RelicButtonController>().relic = relicSelection[1];
-    //         GameManager.Instance.relicIconManager.PlaceSprite(relicSelection[1].SpriteId, relicIcon2.GetComponent<Image>());
-    //     }
-    // }
-    // public void ClearRelicOptions()
-    // {
-    //     relicIcon1.SetActive(false);
-    //     relicText1.gameObject.SetActive(false);
-    //     relicButton1.SetActive(false);
-    //     relicIcon2.SetActive(false);
-    //     relicText2.gameObject.SetActive(false);
-    //     relicButton2.SetActive(false);
-    //}
 
 
 }
