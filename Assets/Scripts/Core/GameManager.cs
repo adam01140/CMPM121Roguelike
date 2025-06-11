@@ -33,6 +33,7 @@ public class GameManager
     public GameObject player;
 
 
+
     public ProjectileManager projectileManager;
     public SpellIconManager spellIconManager;
     public EnemySpriteManager enemySpriteManager;
@@ -71,7 +72,7 @@ public class GameManager
     {
         return enemies;
     }
-    
+
     public void resetGame()
     {
         wave = 1;

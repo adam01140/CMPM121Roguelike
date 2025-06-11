@@ -12,6 +12,7 @@ public class Spell
 
     public string name;
     public string description;
+    public int energy;
     public int icon;
     public string N;
     public float spray;
@@ -181,7 +182,6 @@ public class Spell
                 }
             }
 
-            Debug.Log("Seen KB: " + this.knockback);
             var rb = other.owner.GetComponent<EnemyController>();
             if (rb != null)
             {
@@ -359,6 +359,7 @@ public class ModifierSpell : Spell
     public override IEnumerator Cast(Vector3 where, Vector3 target, Hittable.Team team, int cast = 0, float projDelay = 0.0f, float splitSpread = 0.0f)
     {
         this.AssignOwner(this.owner);
+
         innerSpell.damageFull = new Damage(this.rpn.RPN_to_int(innerSpell.damage.amount), innerSpell.damage.type);
         innerSpell.GetDamageObj().amount = this.GetDamage();
 
@@ -624,7 +625,7 @@ public class ChainingLightningSpell : Spell
         GameObject current = firstTarget;
         if (firstTarget != null)
         {
-            GameManager.Instance.projectileManager.CreateProjectile(0, projectile.trajectory, where, target-where, this.rpn.RPN_to_float(projectile.speed), this.OnHit);
+            GameManager.Instance.projectileManager.CreateProjectile(0, projectile.trajectory, where, target - where, this.rpn.RPN_to_float(projectile.speed), this.OnHit);
             //yield return ChainHit(firstTarget, maxJumps);
         }
         yield return new WaitForEndOfFrame();
@@ -668,8 +669,9 @@ public class ChainingLightningSpell : Spell
     // }
     override public void OnHit(Hittable other, Vector3 impact)
     {
-        
-        if (jumpsLeft <= 0) {
+
+        if (jumpsLeft <= 0)
+        {
             return;
         }
         Debug.Log(jumpsLeft + " JumpsLeft");
@@ -698,10 +700,10 @@ public class ChainingLightningSpell : Spell
             GameManager.Instance.projectileManager.CreateProjectile(0, projectile.trajectory, current.transform.position, nextTarget.transform.position, this.rpn.RPN_to_float(projectile.speed), this.OnHit);
             jumpsLeft--;
             current = nextTarget;
-            
+
             //yield return ChainHit(nextTarget, jumpsLeft - 1);
         }
-        
+
     }
 
     ChainingLightningSpell() : base()
@@ -732,8 +734,8 @@ public class FireballSpell : Spell
         location = where;
         //float radius = 5f;
         GameManager.Instance.projectileManager.CreateProjectile(0, projectile.trajectory, where, target - where, this.rpn.RPN_to_float(projectile.speed), this.OnHit);
-        
-        
+
+
 
         yield return new WaitForEndOfFrame();
     }
@@ -742,8 +744,8 @@ public class FireballSpell : Spell
     {
         var enemies = new List<GameObject>(GameManager.Instance.GetAllEnemies());
         foreach (var enemy in enemies)
-        {   
-            
+        {
+
             float dist = Vector3.Distance(location, enemy.transform.position);
             if (dist <= radius)
             {
