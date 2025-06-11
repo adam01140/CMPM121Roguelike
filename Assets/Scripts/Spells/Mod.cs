@@ -209,8 +209,64 @@ public class Knockback : Mod
 
 
     }
+}
 
+public class Stun : Mod
+{
+    public Stun()
+    {
+        Dictionary<string, int> tempDict = new Dictionary<string, int>();
+        tempDict["wave"] = GameManager.Instance.wave;
+        this.localRPN = new RPN(tempDict);
+    }
 
+    public override void ApplySelf(ModifierSpell spell)
+    {
+        float stunDuration = this.localRPN.RPN_to_float(stun_duration);
+        spell.AddStunEffect(stunDuration);
+    }
+
+    public string stun_duration;
+}
+
+public class Vulnerable : Mod
+{
+    public Vulnerable()
+    {
+        Dictionary<string, int> tempDict = new Dictionary<string, int>();
+        tempDict["wave"] = GameManager.Instance.wave;
+        this.localRPN = new RPN(tempDict);
+    }
+
+    public override void ApplySelf(ModifierSpell spell)
+    {
+        float multiplier = this.localRPN.RPN_to_float(vulnerability_multiplier);
+        float duration = this.localRPN.RPN_to_float(vulnerability_duration);
+        spell.AddVulnerabilityEffect(multiplier, duration);
+    }
+
+    public string vulnerability_multiplier;
+    public string vulnerability_duration;
+}
+
+public class Inaccuracy : Mod
+{
+    public Inaccuracy()
+    {
+        Dictionary<string, int> tempDict = new Dictionary<string, int>();
+        tempDict["wave"] = GameManager.Instance.wave;
+        this.localRPN = new RPN(tempDict);
+    }
+
+    public override void ApplySelf(ModifierSpell spell)
+    {
+        float chance = this.localRPN.RPN_to_float(miss_chance);
+        float duration = this.localRPN.RPN_to_float(miss_duration);
+        spell.AddMissChanceEffect(chance, duration);
+    }
+
+    public string miss_chance;
+    public string miss_duration;
 }
 
 

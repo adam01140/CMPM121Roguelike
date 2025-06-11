@@ -25,6 +25,12 @@ public class Spells
     public Slow slow;
     public Knockback knockback;
 
+    public Stun stun;
+    public Vulnerable vulnerable;
+    public Inaccuracy inaccuracy;
+
+
+
 
 
 

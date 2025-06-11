@@ -258,6 +258,10 @@ public class ModifierSpell : Spell
     private float delay;
     private float splitSpread;
 
+    public float stunDuration = 0f;
+    public float vulnerabilityMultiplier = 1f;
+    public float missChance = 0f;
+
     public ModifierSpell(Spell inner)
     {
         this.innerSpell = inner;
@@ -321,6 +325,11 @@ public class ModifierSpell : Spell
 
     }
 
+    public void AddStunEffect(float duration) => this.stunDuration = duration;
+    public void AddVulnerabilityEffect(float multiplier, float duration) => this.vulnerabilityMultiplier = multiplier;
+    public void AddMissChanceEffect(float chance, float duration) => this.missChance = chance;
+
+
 
     public override int GetDamage()
     {
@@ -373,6 +382,40 @@ public class ModifierSpell : Spell
         innerSpell.AssignOwner(owner);
         this.team = team;
 
+void WrappedOnHit(Hittable other, Vector3 impact)
+{
+
+    if (other.team != team)
+    {
+        var ec = other.owner.GetComponent<EnemyController>();
+        if (ec != null)
+        {
+
+            if (stunDuration > 0)
+            {
+                ec.StartCoroutine(ApplyStun(ec, stunDuration));
+            }
+
+            if (vulnerabilityMultiplier > 1f)
+            {
+                ec.ApplyVulnerability(vulnerabilityMultiplier, 5f);
+            }
+
+            if (missChance > 0)
+            {
+                ec.ApplyInaccuracy(missChance, 5f);
+            }
+        }
+    }
+
+    innerSpell.OnHit(other, impact);
+}
+
+
+
+
+        GameManager.Instance.projectileManager.CreateProjectile(0, innerSpell.projectile.trajectory, where, target - where, GetSpeed(), WrappedOnHit);
+
         //Updates inner spell's damage object
 
         // Override projectile speed if modifiers exist
@@ -392,6 +435,16 @@ public class ModifierSpell : Spell
 
         this.last_cast = Time.time;
         yield return new WaitForEndOfFrame();
+    }
+
+    private IEnumerator ApplyStun(EnemyController enemy, float duration)
+    {
+        if (enemy != null)
+        {
+            enemy.isStunned = true;
+            yield return new WaitForSeconds(duration);
+            enemy.isStunned = false;
+        }
     }
 }
 public class ArcaneBolt : Spell

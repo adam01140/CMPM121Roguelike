@@ -192,5 +192,17 @@
         "name": "knockback",
         "description": "Applies a knockback on hit",
         "knockback_amount": "5.0"
+    },
+        "stun": {
+    "name": "stun",
+    "description": "Stuns the target briefly on hit",
+    "stun_duration": "1.5"
+    },
+    "vulnerable": {
+    "name": "vulnerable",
+    "description": "Makes enemies take more damage for a short time.",
+    "vulnerability_multiplier": "1.5",
+    "vulnerability_duration": "3.0"
     }
+
 }

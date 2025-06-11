@@ -1,8 +1,8 @@
 using UnityEngine;
+using System.Collections;
 
 public class EnemyController : MonoBehaviour
 {
-
     public Transform target;
     public int speed;
     public Hittable hp;
@@ -10,7 +10,11 @@ public class EnemyController : MonoBehaviour
     public bool dead;
     public int damage;
     public float last_attack;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+
+    public bool isStunned = false;
+    private float vulnerabilityMultiplier = 1f;
+    private float missChance = 0f;
+
     void Start()
     {
         target = GameManager.Instance.player.transform;
@@ -18,9 +22,10 @@ public class EnemyController : MonoBehaviour
         healthui.SetHealth(hp);
     }
 
-    // Update is called once per frame
     void Update()
     {
+        if (isStunned) return;
+
         Vector3 direction = target.position - transform.position;
         if (direction.magnitude < 2f)
         {
@@ -37,10 +42,14 @@ public class EnemyController : MonoBehaviour
         if (last_attack + 2 < Time.time)
         {
             last_attack = Time.time;
-            target.gameObject.GetComponent<PlayerController>().hp.Damage(new Damage(damage, Damage.Type.PHYSICAL));
+
+            if (Random.value < missChance) return;
+
+            target.gameObject.GetComponent<PlayerController>().hp.Damage(
+                new Damage((int)(damage * vulnerabilityMultiplier), Damage.Type.PHYSICAL)
+            );
         }
     }
-
 
     void Die()
     {
@@ -50,5 +59,29 @@ public class EnemyController : MonoBehaviour
             GameManager.Instance.RemoveEnemy(gameObject);
             Destroy(gameObject);
         }
+    }
+
+    public void ApplyVulnerability(float multiplier, float duration) // scott
+    {
+        StartCoroutine(ApplyVulnerabilityCoroutine(multiplier, duration));
+    }
+
+    private IEnumerator ApplyVulnerabilityCoroutine(float multiplier, float duration)
+    {
+        vulnerabilityMultiplier = multiplier;
+        yield return new WaitForSeconds(duration);
+        vulnerabilityMultiplier = 1f;
+    }
+
+    public void ApplyInaccuracy(float chance, float duration)
+    {
+        StartCoroutine(ApplyInaccuracyCoroutine(chance, duration));
+    }
+
+    private IEnumerator ApplyInaccuracyCoroutine(float chance, float duration)
+    {
+        missChance = chance;
+        yield return new WaitForSeconds(duration);
+        missChance = 0f;
     }
 }

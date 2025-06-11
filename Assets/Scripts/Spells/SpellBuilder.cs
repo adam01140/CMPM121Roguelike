@@ -70,6 +70,10 @@ public class SpellBuilder
         allSpellsMods.Add(this.spell_bases.machine);
         allSpellsMods.Add(this.spell_bases.slow);
         allSpellsMods.Add(this.spell_bases.knockback);
+        allSpellsMods.Add(this.spell_bases.stun);        
+        allSpellsMods.Add(this.spell_bases.vulnerable);  
+        allSpellsMods.Add(this.spell_bases.inaccuracy);   
+
 
     }
 
