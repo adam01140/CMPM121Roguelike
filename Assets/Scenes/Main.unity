@@ -1654,6 +1654,7 @@ MonoBehaviour:
   manager: {fileID: 382471328}
   icon: {fileID: 392782949}
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -1862,6 +1863,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   manager: {fileID: 382471328}
   icon: {fileID: 392782949}
+=======
+>>>>>>> Stashed changes
 --- !u!1 &395541313
 GameObject:
   m_ObjectHideFlags: 0
@@ -4530,6 +4533,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   manager: {fileID: 382471328}
   icon: {fileID: 805487453}
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 --- !u!1 &856041115
 GameObject:
@@ -8620,6 +8626,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   manager: {fileID: 382471328}
   icon: {fileID: 1768704377}
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 --- !u!1 &1770955743
 GameObject:
@@ -59115,6 +59124,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   manager: {fileID: 382471328}
   icon: {fileID: 1954879438}
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 --- !u!1 &1982188283
 GameObject:
