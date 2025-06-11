@@ -80,12 +80,11 @@ public class SpellBuilder
     public ModifierSpell GetRandomSpell(SpellCaster owner)
     {
 
-        ModifierSpell spell = GetRandomBase(owner);
-
-        Mod mod = GetRandomMod();
-        mod.ApplySelf(spell);
+        ModifierSpell spell = GetFirstSpell(owner);
 
         return spell;
+
+
     }
 
     public ModifierSpell GetRandomBase(SpellCaster owner)
@@ -95,16 +94,24 @@ public class SpellBuilder
         Spell temp = allSpellsBases[index];
         temp.AssignOwner(owner);
         ModifierSpell spell = new ModifierSpell(temp);
-        Debug.Log("Setting base " + spell.name);
         return spell;
     }
+    public ModifierSpell GetFirstSpell(SpellCaster owner)
+    {
+        int index = 0;
+        this.lastBaseIndex = index;
+        Spell temp = allSpellsBases[index];
+        temp.AssignOwner(owner);
+        ModifierSpell spell = new ModifierSpell(temp);
+        return spell;
+    }
+
 
     public Mod GetRandomMod()
     {
         int index = Random.Range(0, allSpellsMods.Count);
         this.lastModIndex = index;
         Mod mod = allSpellsMods[index];
-        Debug.Log("Adding mod " + mod.name);
         return mod;
     }
 
