@@ -17,7 +17,7 @@ public class FloorItem : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        this.haseBase = false;
+        this.hasBase = false;
         this.hasMod = false;
     }
 
@@ -27,7 +27,9 @@ public class FloorItem : MonoBehaviour
         if (this.hasBase == true)
         {
             GameManager.Instance.relicIconManager.PlaceSprite(this.spriteId, this.icon);
-        } else if (this.hasMod == true) {
+        }
+        else if (this.hasMod == true)
+        {
             GameManager.Instance.relicIconManager.PlaceSprite(this.spriteId, this.icon);
         }
 
@@ -37,7 +39,7 @@ public class FloorItem : MonoBehaviour
 
     public void Set(int spriteId)
     {
-        this.spriteId = spriteId
+        this.spriteId = spriteId;
     }
 
 }

@@ -107,7 +107,10 @@
         "energy": 2,
         "icon": 4,
         "N": "3",
-        "damage": { "amount": "30 power 5 / +", "type": "arcane" },
+        "damage": {
+            "amount": "30 power 5 / +",
+            "type": "arcane"
+        },
         "mana_cost": "20 power 5 / +",
         "cooldown": "1.5",
         "jump_range": "5",
@@ -123,7 +126,9 @@
         "description": "A massive explosion that damages all enemies nearby.",
         "energy": 3,
         "icon": 5,
-        "damage": { "amount": "30 power 5 / +" },
+        "damage": {
+            "amount": "30 power 5 / +"
+        },
         "mana_cost": "50",
         "cooldown": "2",
         "radius": "3",
@@ -137,6 +142,7 @@
     "damage_amp": {
         "name": "damage-amplified",
         "description": "Increased damage and increased mana cost.",
+        "icon": 8,
         "energy": 1,
         "damage_multiplier": "1.5",
         "mana_multiplier": "1.5"
@@ -144,12 +150,14 @@
     "speed_amp": {
         "name": "speed-amplified",
         "description": "Faster projectile speed",
+        "icon": 13,
         "energy": 1,
         "speed_multiplier": "1.75"
     },
     "doubler": {
         "name": "doubled",
         "N": "1",
+        "icon": 16,
         "description": "Spell is cast a second time after a small delay; increased mana cost and cooldown.",
         "energy": 2,
         "delay": "0.5",
@@ -159,6 +167,7 @@
     "splitter": {
         "name": "split",
         "N": "1",
+        "icon": 14,
         "description": "Spell is cast twice in slightly different directions; increased mana cost.",
         "energy": 2,
         "angle": "10",
@@ -167,6 +176,7 @@
     "chaos": {
         "name": "chaotic",
         "description": "Significantly increased damage, but projectile is spiraling.",
+        "icon": 17,
         "energy": 1,
         "damage_multiplier": "1.5 wave 5 / +",
         "projectile_trajectory": "spiraling"
@@ -174,6 +184,7 @@
     "homing": {
         "name": "homing",
         "description": "Homing projectile, with decreased damage and increased mana cost.",
+        "icon": 12,
         "damage_multiplier": "0.75",
         "energy": 2,
         "mana_adder": "10",
@@ -182,6 +193,7 @@
     "machine": {
         "name": "machine",
         "description": "will continue to shoot projectiles from your location for a period of time with greatly decreased damage",
+        "icon": 10,
         "energy": 3,
         "N": "7 power 25 / +",
         "damage_multiplier": "0.4",
@@ -192,6 +204,7 @@
     "bleed": {
         "name": "bleed",
         "description": "Enemys will take damage over time based on the initial hit for 5 seconds. Also increases spell damage at the cost of a greater cooldown",
+        "icon": 7,
         "energy": 1,
         "damage_multiplier": "1.5",
         "cooldown_multiplier": "1.5",
@@ -200,6 +213,7 @@
     "slow": {
         "name": "slow",
         "description": "Applies a short slow on hit",
+        "icon": 9,
         "energy": 1,
         "slow_amount": "2",
         "slow_duration": "0.5"
@@ -207,6 +221,7 @@
     "knockback": {
         "name": "knockback",
         "description": "Applies a knockback on hit",
+        "icon": 6,
         "energy": 2,
         "knockback_amount": "5.0"
     }

@@ -4,57 +4,51 @@ using UnityEngine.UI;
 
 public class BaseInventorySlotManager : MonoBehaviour
 {
-    public Spell spellBase;
+    public ModifierSpell spellBase;
     public CraftingUIManager manager;
     public Image icon;
 
-    public bool hasSpell;
+
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        this.spellBase = null;
-        this.hasSpell = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(this.hasSpell);
-        if (this.hasSpell == true)
+        if (this.spellBase != null)
         {
-            GameManager.Instance.relicIconManager.PlaceSprite(this.spellBase.icon, this.icon);
+            GameManager.Instance.spellIconManager.PlaceSprite(this.spellBase.icon, this.icon);
         }
     }
 
     public void OnMouseDown()
     {
         this.manager.SetSelectedBase(this.spellBase);
+        this.manager.SetDesc(this.spellBase.description);
 
     }
 
 
-    public void Set(Spell spellBase)
+    public void SetSpell(ModifierSpell spellBase)
     {
-        if (this.hasSpell == false)
-        {
-            this.spellBase = spellBase;
-            this.hasSpell = true;
-        }
+
+        this.spellBase = spellBase;
     }
 
     public void Release()
     {
-        if (this.hasSpell == true)
-        {
-            this.hasSpell = false;
-            this.spellBase = null;
-        }
+        this.spellBase = null;
     }
-    public void OnMouseOver(){
+    public void OnMouseOver()
+    {
         //Set textbox to active
     }
-    public void OnMouseExit(){
+    public void OnMouseExit()
+    {
         //Set textbox to inactive
     }
 }

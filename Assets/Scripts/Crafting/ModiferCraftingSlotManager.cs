@@ -2,11 +2,13 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
-public class ModiferCraftingSlotManager : MonoBehaviour
+public class ModifierCraftingSlotManager : MonoBehaviour
 {
     public Mod modifier;
     public CraftingUIManager manager;
     public Image icon;
+
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -17,7 +19,10 @@ public class ModiferCraftingSlotManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        if (this.modifier != null)
+        {
+            GameManager.Instance.spellIconManager.PlaceSprite(this.modifier.icon, this.icon);
+        }
     }
 
 
@@ -34,24 +39,21 @@ public class ModiferCraftingSlotManager : MonoBehaviour
 
     public void Set(Mod modifier)
     {
-        if (this.modifier == null)
-        {
-            this.modifier = modifier;
-        }
+        this.modifier = modifier;
+
     }
 
     public void Release()
     {
-        if (this.modifier != null)
-        {
-            this.modifier = null;
-        }
+        this.modifier = null;
     }
 
-    public void OnMouseOver(){
+    public void OnMouseOver()
+    {
         //Set textbox to active
     }
-    public void OnMouseExit(){
+    public void OnMouseExit()
+    {
         //Set textbox to inactive
     }
 

@@ -9,28 +9,26 @@ public class RelicSlotManager : MonoBehaviour
     public CraftingUIManager manager;
     public Image icon;
 
-    public bool hasRelic;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        this.relic = null;
-        this.hasRelic = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(this.hasRelic);
-        if (this.hasRelic == true)
+
+        if (this.relic != null)
         {
-            GameManager.Instance.relicIconManager.PlaceSprite(this.relic.icon, this.icon);
+            GameManager.Instance.relicIconManager.PlaceSprite(this.relic.SpriteId, this.icon);
         }
 
     }
 
     public void OnMouseDown()
     {
+        Debug.Log(this.manager.selectedRelic);
         if (this.manager.selectedRelic != null)
         {
             this.Set(this.manager.selectedRelic);
@@ -41,26 +39,13 @@ public class RelicSlotManager : MonoBehaviour
 
     public void Set(Relic relic)
     {
-        if (this.hasRelic == false)
-        {
-            this.relic = relic;
-            this.hasRelic = true;
-        }
+        this.relic = relic;
     }
 
     public void Release()
     {
-        if (this.hasRelic == true)
-        {
-            this.hasRelic = false;
-            this.relic = null;
-        }
+        this.relic = null;
     }
 
-    public void OnMouseOver(){
-        //Set textbox to active
-    }
-    public void OnMouseExit(){
-        //Set textbox to inactive
-    }
+
 }

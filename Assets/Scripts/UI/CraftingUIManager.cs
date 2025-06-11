@@ -2,26 +2,35 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
+using UnityEditor.ShaderGraph.Internal;
+using NUnit.Framework.Constraints;
 
 public class CraftingUIManager : MonoBehaviour
 {
     public GameObject craftingUI;
 
-    public InventoryManager inventory
+    public InventoryManager inventory;
 
-    public List<TMP_Text> descriptions;
+    public GameObject description;
 
     public GameObject baseSpellSlot;
     //Static slots for testing, should probably be a list or smthn
-    public GameObject slot1;
-    public GameObject slot2;
-    public GameObject slot3;
-    //
-    public GameObject baseInvSlot;
-    public GameObject modInvSlot;
+    public GameObject modSlot1;
+    public GameObject modSlot2;
+    public GameObject modSlot3;
+    public GameObject modSlot4;
+    public GameObject relicSlot1;
+    public GameObject relicSlot2;
+    public GameObject relicSlot3;
+    public GameObject relicSlot4;
 
-    public Spell selectedBase;
+
+    //
+
+    public ModifierSpell selectedBase;
     public Mod selectedMod;
+
+    public Relic selectedRelic;
 
     public GameObject energyIcon;
     public TMP_Text energyMax;
@@ -29,6 +38,9 @@ public class CraftingUIManager : MonoBehaviour
 
     public SpellBuilder builder;
 
+    private bool needToPopulate;
+
+    private bool firstTimeLoad;
 
 
     void Start()
@@ -36,40 +48,58 @@ public class CraftingUIManager : MonoBehaviour
         //this.craftingUI.SetActive(true);
         this.builder = new SpellBuilder();
 
-        this.inventory = new InventoryManager();
 
         this.baseSpellSlot.GetComponent<BaseCraftingSlotManager>().manager = this;
 
-        this.slot1.GetComponent<ModiferCraftingSlotManager>().manager = this;
+        this.modSlot1.GetComponent<ModifierCraftingSlotManager>().manager = this;
 
-        this.slot2.GetComponent<ModiferCraftingSlotManager>().manager = this;
+        this.modSlot2.GetComponent<ModifierCraftingSlotManager>().manager = this;
 
-        this.slot3.GetComponent<ModiferCraftingSlotManager>().manager = this;
+        this.modSlot3.GetComponent<ModifierCraftingSlotManager>().manager = this;
 
-        this.baseInvSlot.GetComponent<BaseInventorySlotManager>().manager = this;
+        this.modSlot4.GetComponent<ModifierCraftingSlotManager>().manager = this;
+
+        this.relicSlot1.GetComponent<RelicSlotManager>().manager = this;
+
+        this.relicSlot2.GetComponent<RelicSlotManager>().manager = this;
+
+        this.relicSlot3.GetComponent<RelicSlotManager>().manager = this;
+
+        this.relicSlot4.GetComponent<RelicSlotManager>().manager = this;
+
+        this.firstTimeLoad = true;
 
 
-
-        this.modInvSlot.GetComponent<ModifierInventorySlotManager>().manager = this;
 
     }
 
     void Update()
     {
-        if (GameManager.Instance.state == GameManager.GameState.INWAVE)
+        if (GameManager.Instance.state == GameManager.GameState.WAVEEND || GameManager.Instance.state == GameManager.GameState.GAMEOVER)
         {
-            this.craftingUI.SetActive(false);
-
+            this.craftingUI.SetActive(true);
+            if (this.needToPopulate == true)
+            {
+                this.needToPopulate = false;
+                this.inventory.PopulateInventoryUI();
+            }
+            if (this.firstTimeLoad == true)
+            {
+                this.baseSpellSlot.GetComponent<BaseCraftingSlotManager>().spellBase = builder.GetFirstSpell(this.caster);
+                this.firstTimeLoad = false;
+            }
 
         }
         else
         {
-            this.craftingUI.SetActive(true);
+            this.craftingUI.SetActive(false);
+            this.needToPopulate = true;
+
 
         }
     }
 
-    public void SetSelectedBase(Spell spellBase)
+    public void SetSelectedBase(ModifierSpell spellBase)
     {
         if (spellBase == null)
         {
@@ -79,6 +109,10 @@ public class CraftingUIManager : MonoBehaviour
         if (this.selectedMod != null)
         {
             this.selectedMod = null;
+        }
+        if (this.selectedRelic != null)
+        {
+            this.selectedRelic = null;
         }
         this.selectedBase = spellBase;
     }
@@ -93,40 +127,103 @@ public class CraftingUIManager : MonoBehaviour
         {
             this.selectedBase = null;
         }
+        if (this.selectedRelic != null)
+        {
+            this.selectedRelic = null;
+        }
+
         this.selectedMod = mod;
     }
+    public void SetSelectedRelic(Relic relic)
+    {
+        if (relic == null)
+        {
+            Debug.Log("Invalid Base");
+            return;
+        }
+        if (this.selectedBase != null)
+        {
+            this.selectedBase = null;
+        }
+        if (this.selectedMod != null)
+        {
+            this.selectedMod = null;
+        }
+        this.selectedRelic = relic;
+        Debug.Log(this.selectedRelic);
+    }
+
 
     public void SetCaster(SpellCaster spellCaster)
     {
         this.caster = spellCaster;
         this.builder = new SpellBuilder();
 
-        this.baseInvSlot.GetComponent<BaseInventorySlotManager>().Set(this.builder.GetRandomBase(spellCaster));
+
+    }
+
+    public void SetDesc(string desc)
+    {
+        this.description.GetComponent<TextMeshProUGUI>().text = desc;
     }
 
 
-    public void SetCraftedSpell()
+    public ModifierSpell GetCraftedSpell()
     {
-        ModifierSpell spell = new ModifierSpell(this.baseSpellSlot.GetComponent<BaseCraftingSlotManager>().spellBase);
+        ModifierSpell spell = this.baseSpellSlot.GetComponent<BaseCraftingSlotManager>().spellBase;
         Mod temp;
 
-        if (this.slot1.GetComponent<ModiferCraftingSlotManager>().modifier != null)
+        if (this.modSlot1.GetComponent<ModifierCraftingSlotManager>().modifier != null)
         {
-            temp = this.slot1.GetComponent<ModiferCraftingSlotManager>().modifier;
+            temp = this.modSlot1.GetComponent<ModifierCraftingSlotManager>().modifier;
             temp.ApplySelf(spell);
         }
-        if (this.slot2.GetComponent<ModiferCraftingSlotManager>().modifier != null)
+        if (this.modSlot2.GetComponent<ModifierCraftingSlotManager>().modifier != null)
         {
-            temp = this.slot2.GetComponent<ModiferCraftingSlotManager>().modifier;
+            temp = this.modSlot2.GetComponent<ModifierCraftingSlotManager>().modifier;
             temp.ApplySelf(spell);
         }
-        if (this.slot3.GetComponent<ModiferCraftingSlotManager>().modifier != null)
+        if (this.modSlot3.GetComponent<ModifierCraftingSlotManager>().modifier != null)
         {
-            temp = this.slot3.GetComponent<ModiferCraftingSlotManager>().modifier;
+            temp = this.modSlot3.GetComponent<ModifierCraftingSlotManager>().modifier;
             temp.ApplySelf(spell);
         }
-
+        if (this.modSlot4.GetComponent<ModifierCraftingSlotManager>().modifier != null)
+        {
+            temp = this.modSlot4.GetComponent<ModifierCraftingSlotManager>().modifier;
+            temp.ApplySelf(spell);
+        }
+        return spell;
     }
+
+    public void SetRelics()
+    {
+        Relic temp;
+        PlayerController player = GameManager.Instance.player.GetComponent<PlayerController>();
+        player.ClearRelics();
+        if (this.relicSlot1.GetComponent<RelicSlotManager>().relic != null)
+        {
+            temp = this.relicSlot1.GetComponent<RelicSlotManager>().relic;
+            player.SetPlayerRelic(temp);
+        }
+        if (this.relicSlot2.GetComponent<RelicSlotManager>().relic != null)
+        {
+            temp = this.relicSlot2.GetComponent<RelicSlotManager>().relic;
+            player.SetPlayerRelic(temp);
+        }
+        if (this.relicSlot3.GetComponent<RelicSlotManager>().relic != null)
+        {
+            temp = this.relicSlot3.GetComponent<RelicSlotManager>().relic;
+            player.SetPlayerRelic(temp);
+        }
+        if (this.relicSlot4.GetComponent<RelicSlotManager>().relic != null)
+        {
+            temp = this.relicSlot4.GetComponent<RelicSlotManager>().relic;
+            player.SetPlayerRelic(temp);
+        }
+    }
+
+
 
 
 

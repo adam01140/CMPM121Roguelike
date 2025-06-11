@@ -12,10 +12,10 @@ GameObject:
   - component: {fileID: 805337640541981903}
   - component: {fileID: 8469991400705853025}
   - component: {fileID: 477103447810563490}
-  - component: {fileID: 7046469166162675396}
-  - component: {fileID: 8453846030024269198}
+  - component: {fileID: 2343417240325240706}
+  - component: {fileID: -2065440249560819302}
   m_Layer: 5
-  m_Name: ModSlot
+  m_Name: SpellSlot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -37,7 +37,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -450, y: 0}
+  m_AnchoredPosition: {x: -250, y: 0}
   m_SizeDelta: {x: 34, y: 34}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &805337640541981903
@@ -68,7 +68,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -4783177402104371535, guid: b07fcc685ae4e6f4ca2984caab3cf1b0, type: 3}
+  m_Sprite: {fileID: 2216962988415778236, guid: 4d755b60fec9ef04192dfcbe6e680d02, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -100,7 +100,7 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 0}
---- !u!114 &7046469166162675396
+--- !u!114 &2343417240325240706
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -109,12 +109,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 7557543120329724951}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 05cd5377c2160084ebf53273d726c208, type: 3}
+  m_Script: {fileID: 11500000, guid: 8666d6e00235b88448167d0f34b457e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spellBase:
+    name: 
+    description: 
+    energy: 0
+    icon: 0
+    N: 
+    spray: 0
+    mana_cost: 
+    cooldown: 0
+    projectile:
+      trajectory: 
+      speed: 
+      lifetime: 
+      sprite: 0
+    secondary_projectile:
+      trajectory: 
+      speed: 
+      lifetime: 
+      sprite: 0
+    last_cast: 0
+    team: 0
+    knockback: 0
   manager: {fileID: 0}
   icon: {fileID: 8469991400705853025}
---- !u!114 &8453846030024269198
+  hasSpell: 0
+--- !u!114 &-2065440249560819302
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -158,8 +181,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7046469166162675396}
-        m_TargetAssemblyTypeName: ModifierInventorySlotManager, Assembly-CSharp
+      - m_Target: {fileID: 2343417240325240706}
+        m_TargetAssemblyTypeName: BaseInventorySlotManager, Assembly-CSharp
         m_MethodName: OnMouseDown
         m_Mode: 1
         m_Arguments:

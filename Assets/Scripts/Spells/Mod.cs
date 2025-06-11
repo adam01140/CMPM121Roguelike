@@ -25,6 +25,7 @@ public abstract class Mod
     public float slow_duration;
     public float knockback_amount;
     public RPN localRPN;
+    public int icon = 1;
 
 
     public abstract void ApplySelf(ModifierSpell spell);

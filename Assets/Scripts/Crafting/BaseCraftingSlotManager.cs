@@ -5,28 +5,25 @@ using System;
 
 public class BaseCraftingSlotManager : MonoBehaviour
 {
-    public Spell spellBase;
+    public ModifierSpell spellBase;
     public CraftingUIManager manager;
     public Image icon;
 
-    public bool hasSpell;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         this.spellBase = null;
-        this.hasSpell = false;
-        //Instantiate a text box with spell desc 
     }
 
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(this.hasSpell);
-        if (this.hasSpell == true)
+        if (this.spellBase != null)
         {
-            GameManager.Instance.relicIconManager.PlaceSprite(this.spellBase.icon, this.icon);
+            GameManager.Instance.spellIconManager.PlaceSprite(this.spellBase.icon, this.icon);
         }
+
 
     }
 
@@ -40,27 +37,23 @@ public class BaseCraftingSlotManager : MonoBehaviour
     }
 
 
-    public void Set(Spell spellBase)
+    public void Set(ModifierSpell spellBase)
     {
-        if (this.hasSpell == false)
-        {
-            this.spellBase = spellBase;
-            this.hasSpell = true;
-        }
+        this.spellBase = spellBase;
     }
 
     public void Release()
     {
-        if (this.hasSpell == true)
-        {
-            this.hasSpell = false;
-            this.spellBase = null;
-        }
+
+        this.spellBase = null;
+
     }
-    public void OnMouseOver(){
+    public void OnMouseOver()
+    {
         //Set textbox to active
     }
-    public void OnMouseExit(){
+    public void OnMouseExit()
+    {
         //Set textbox to inactive
     }
 }
