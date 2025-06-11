@@ -299,7 +299,7 @@ GameObject:
   - component: {fileID: 8469991400705853025}
   - component: {fileID: 8318713314111479034}
   m_Layer: 5
-  m_Name: relic
+  m_Name: BaseSlot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
